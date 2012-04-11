@@ -2,253 +2,213 @@
 Django settings
 ===============
 
-A Django settings file contains all the configuration of your Django
-installation. This document explains how settings work and which settings are
-available.
+Django的settings文件包含Django应用的所有配置项。该文档会介绍settings是如何运行，以及有哪些设置项是可用的。
 
-The basics
-==========
+基础
+====
 
-A settings file is just a Python module with module-level variables.
+配置文件只是一个使用模块级变量的一个Python模块。
 
-Here are a couple of example settings::
+一组配置例子::
 
     DEBUG = False
     DEFAULT_FROM_EMAIL = 'webmaster@example.com'
     TEMPLATE_DIRS = ('/home/templates/mike', '/home/templates/john')
 
-Because a settings file is a Python module, the following apply:
+因为配置文件是Python模块，所以要注意以下几项:
 
-* It doesn't allow for Python syntax errors.
-* It can assign settings dynamically using normal Python syntax.
-  For example::
+* 不能有Python语法错误
+* 可以用Python语法实现动态配置，例如::
 
       MY_SETTING = [str(i) for i in range(30)]
 
-* It can import values from other settings files.
+* 可以从其他配置文件中引入变量
 
 .. _django-settings-module:
 
-Designating the settings
-========================
+指定配置文件
+============
 
-When you use Django, you have to tell it which settings you're using. Do this
-by using an environment variable, ``DJANGO_SETTINGS_MODULE``.
+使用Django时要通知Django当前使用的是哪个配置文件。可以改变环境变量
+``DJANGO_SETTINGS_MODULE`` 实现这一点。
 
-The value of ``DJANGO_SETTINGS_MODULE`` should be in Python path syntax, e.g.
-``mysite.settings``. Note that the settings module should be on the
-Python `import search path`_.
+``DJANGO_SETTINGS_MODULE`` 的值是一个符合Python语法的路径，比如
+``mysite.settings`` 。要注意settings模块应该在Python可搜索到的路径中
+`import search path`_.
 
 .. _import search path: http://diveintopython.net/getting_to_know_python/everything_is_an_object.html
 
-The django-admin.py utility
----------------------------
+django-admin.py 工具
+--------------------
 
-When using :doc:`django-admin.py </ref/django-admin>`, you can either set the
-environment variable once, or explicitly pass in the settings module each time
-you run the utility.
+使用 :doc:`django-admin.py </ref/django-admin>` ，既可以一次性设置环境变量，也可以每次都传入配置模块路径。
 
-Example (Unix Bash shell)::
+例子（Unix Bash shell）::
 
     export DJANGO_SETTINGS_MODULE=mysite.settings
     django-admin.py runserver
 
-Example (Windows shell)::
+例子（Windows shell）::
 
     set DJANGO_SETTINGS_MODULE=mysite.settings
     django-admin.py runserver
 
-Use the ``--settings`` command-line argument to specify the settings manually::
+使用 ``--settings`` 命令行参数指定配置模块路径::
 
     django-admin.py runserver --settings=mysite.settings
 
 .. _django-admin.py: ../django-admin/
 
-On the server (mod_wsgi)
---------------------------
+服务器端(mod_wsgi)
+------------------
 
-In your live server environment, you'll need to tell your WSGI
-application what settings file to use. Do that with ``os.environ``::
+在服务器环境下，要通知WSGI应用当前使用的是哪个配置文件，用到 ``os.environ``::
 
     import os
 
     os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 
-Read the :doc:`Django mod_wsgi documentation
-</howto/deployment/wsgi/modwsgi>` for more information and other common
-elements to a Django WSGI application.
+阅读 :doc:`Django mod_wsgi documentation
+</howto/deployment/wsgi/modwsgi>` 了解更多关于Django WSGI应用的信息和相关设置。
 
-Default settings
-================
+默认配置
+========
 
-A Django settings file doesn't have to define any settings if it doesn't need
-to. Each setting has a sensible default value. These defaults live in the
-module :file:`django/conf/global_settings.py`.
+在无需配置的情况下，Django配置文件没必要定义任何配置项。因为每个配置项都有一个明确的默认值。
+默认值都保存在模块 :file:`django/conf/global_settings.py` 中。
 
-Here's the algorithm Django uses in compiling settings:
+Django按如下算法编译配置模块:
 
-* Load settings from ``global_settings.py``.
-* Load settings from the specified settings file, overriding the global
-  settings as necessary.
+* 从 ``global_settings.py`` 中加载配置项
+* 从指定的配置文件中加载配置项，覆盖对应的全局配置项。
 
-Note that a settings file should *not* import from ``global_settings``, because
-that's redundant.
 
-Seeing which settings you've changed
+注意：配置文件中不要再重复引用 ``global_settings`` ，因为这样做是多余的。
+
+查看你已经更改了哪个配置项
 ------------------------------------
 
-There's an easy way to view which of your settings deviate from the default
-settings. The command ``python manage.py diffsettings`` displays differences
-between the current settings file and Django's default settings.
+查看你修改了哪几个配置项很容易，在命令行输入 ``python manage.py diffsettings`` 就会显示当前配置与默认配置中的不同。
 
-For more, see the :djadmin:`diffsettings` documentation.
+想了解更多，可以查看 :djadmin:`diffsettings` 文档。
 
-Using settings in Python code
-=============================
+在Python代码中使用settings
+==========================
 
-In your Django apps, use settings by importing the object
-``django.conf.settings``. Example::
+在具体的Django应用中，通过引入 ``django.conf.settings`` 使用配置，例::
 
     from django.conf import settings
 
     if settings.DEBUG:
         # Do something
 
-Note that ``django.conf.settings`` isn't a module -- it's an object. So
-importing individual settings is not possible::
+注意 ``django.conf.settings`` 并不是一个模块！-- 而是一个对象！所以引入某个单独的设置项是不可能的::
 
     from django.conf.settings import DEBUG  # This won't work.
 
-Also note that your code should *not* import from either ``global_settings`` or
-your own settings file. ``django.conf.settings`` abstracts the concepts of
-default settings and site-specific settings; it presents a single interface.
-It also decouples the code that uses settings from the location of your
-settings.
+还要注意 *不应该* 直接引入 ``global_settings`` 和你自己的配置文件。
+``django.conf.settings`` 整合了默认配置和网站指定配置，从而只提供一个接口读取配置。
+它也解耦了使用自定义配置文件的代码。
 
-Altering settings at runtime
-============================
+运行时更改设置
+==============
 
-You shouldn't alter settings in your applications at runtime. For example,
-don't do this in a view::
+不建议在运行时更改设置。比如，不要在view中这样用::
 
     from django.conf import settings
 
     settings.DEBUG = True   # Don't do this!
 
-The only place you should assign to settings is in a settings file.
+应该只在settings文件中更改设置。
 
-Security
-========
+安全
+====
 
-Because a settings file contains sensitive information, such as the database
-password, you should make every attempt to limit access to it. For example,
-change its file permissions so that only you and your Web server's user can
-read it. This is especially important in a shared-hosting environment.
+由于配置文件包含敏感信息，比如数据库密码，所以应该限制对配置文件的访问。
+比如更改文件权限，从而只能令你和你的WEB服务器能读取配置文件。这在共享主机的环境中非常重要！
 
-Available settings
-==================
+可用的配置项
+============
 
-For a full list of available settings, see the :doc:`settings reference </ref/settings>`.
+查看 :doc:`settings reference </ref/settings>` 了解完整的配置项列表。
 
-Creating your own settings
-==========================
+创建你自己的配置文件
+====================
 
-There's nothing stopping you from creating your own settings, for your own
-Django apps. Just follow these conventions:
+在应用中创建自己的配置文件很简单，只要遵循以下的规范::
 
-* Setting names are in all uppercase.
-* Don't reinvent an already-existing setting.
+* 所有配置项名称都应该大写。
+* 不要重新设置已存在的配置项。
 
-For settings that are sequences, Django itself uses tuples, rather than lists,
-but this is only a convention.
+由于配置文件是序列化的，所以Django用元组而不是用列表，不过这仅仅是建议。
+(wrongway补充：这么说的意思是因为相对能动态增减大小列表来说，元组是定义时就确定了大小，更快也更节省内存)
 
 .. _settings-without-django-settings-module:
 
-Using settings without setting DJANGO_SETTINGS_MODULE
-=====================================================
+无DJANGO_SETTINGS_MODULE下使用配置
+==================================
 
-In some cases, you might want to bypass the ``DJANGO_SETTINGS_MODULE``
-environment variable. For example, if you're using the template system by
-itself, you likely don't want to have to set up an environment variable
-pointing to a settings module.
+某些场合中，你想绕过 ``DJANGO_SETTINGS_MODULE`` 环境变量来进行配置。比如，你正在使用django自带的模板系统，
+而你并不想使用环境变量指定某个具体的配置文件。
 
-In these cases, you can configure Django's settings manually. Do this by
-calling:
+在这种情况下，可以手动设定Django的配置项。要用到下面这个方法：
 
 .. function:: django.conf.settings.configure(default_settings, **settings)
 
-Example::
+例如::
 
     from django.conf import settings
 
     settings.configure(DEBUG=True, TEMPLATE_DEBUG=True,
         TEMPLATE_DIRS=('/home/web-apps/myapp', '/home/web-apps/base'))
 
-Pass ``configure()`` as many keyword arguments as you'd like, with each keyword
-argument representing a setting and its value. Each argument name should be all
-uppercase, with the same name as the settings described above. If a particular
-setting is not passed to ``configure()`` and is needed at some later point,
-Django will use the default setting value.
+通用 ``configure()`` 可以设置任何配置项，每个参数对应一个值。参数名称必须大写，
+而且参数名必须是真实存在。没有在 ``configure()`` 中出现的设置项在随后用到时，
+仍会使用默认值。
 
-Configuring Django in this fashion is mostly necessary -- and, indeed,
-recommended -- when you're using a piece of the framework inside a larger
-application.
+如果你并不想使用整个框架，仅仅是其中一小部分时，如上述这般配置Django是非常必要的。
+事实上，我们建议您这样做。
 
-Consequently, when configured via ``settings.configure()``, Django will not
-make any modifications to the process environment variables (see the
-documentation of :setting:`TIME_ZONE` for why this would normally occur). It's
-assumed that you're already in full control of your environment in these
-cases.
+因此，通过 ``settings.configure()`` 配置django时，并不会对当前进程的环境变量做任何修改。
+（可以查看:setting:`TIME_ZONE` 了解为什么要这么做）。这意味着在上述情况下你仍然完全掌控着当前环境。
 
-Custom default settings
------------------------
 
-If you'd like default values to come from somewhere other than
-``django.conf.global_settings``, you can pass in a module or class that
-provides the default settings as the ``default_settings`` argument (or as the
-first positional argument) in the call to ``configure()``.
+定制默认配置项
+--------------
 
-In this example, default settings are taken from ``myapp_defaults``, and the
-:setting:`DEBUG` setting is set to ``True``, regardless of its value in
-``myapp_defaults``::
+如果你实在不想使用``django.conf.global_settings``，而想自定义配置默认值，
+你可以在调用 ``configure()`` 时使用 ``default_settings`` 参数(或是默认做为第一个参数传入)。该参数是一个提供默认值的模块或是类，
+
+在下面这个例子中，由 ``myapp_defaults`` 提供默认值，并令 :setting:`DEBUG` 被置为 ``True`` 而不是从 ``myapp_defaults`` 中获取::
 
     from django.conf import settings
     from myapp import myapp_defaults
 
     settings.configure(default_settings=myapp_defaults, DEBUG=True)
 
-The following example, which uses ``myapp_defaults`` as a positional argument,
-is equivalent::
+接下来例子使用 ``myapp_defaults`` 做为一个位置参数，这和上面的效果是等同的::
 
     settings.configure(myapp_defaults, DEBUG = True)
 
-Normally, you will not need to override the defaults in this fashion. The
-Django defaults are sufficiently tame that you can safely use them. Be aware
-that if you do pass in a new default module, it entirely *replaces* the Django
-defaults, so you must specify a value for every possible setting that might be
-used in that code you are importing. Check in
-``django.conf.settings.global_settings`` for the full list.
+一般来说，没必要自行设置默认值。Django的默认设置是比较宽松的，你可以放心地使用。
+要注意的是，如果你传入了新的默认模块，那它就会完全 *替换* Django本身的默认设置。因此，
+你必须为接下来可能会用到的所有设置项都重新指定默认值。查看
+``django.conf.settings.global_settings`` 了解全部默认值。
 
-Either configure() or DJANGO_SETTINGS_MODULE is required
---------------------------------------------------------
+configure() 或 DJANGO_SETTINGS_MODULE 两者必用其一
+--------------------------------------------------
 
-If you're not setting the ``DJANGO_SETTINGS_MODULE`` environment variable, you
-*must* call ``configure()`` at some point before using any code that reads
-settings.
+在没有设置 ``DJANGO_SETTINGS_MODULE`` 环境的情况下，就 *必须* 在运行读取配置项的代码之前就调用 ``configure()`` 。
 
-If you don't set ``DJANGO_SETTINGS_MODULE`` and don't call ``configure()``,
-Django will raise an ``ImportError`` exception the first time a setting
-is accessed.
+如果你没有设置 set ``DJANGO_SETTINGS_MODULE`` 也没有调用 ``configure()`` ，
+那么Django会在第一次访问配置项时抛出``ImportError`` 异常。
 
-If you set ``DJANGO_SETTINGS_MODULE``, access settings values somehow, *then*
-call ``configure()``, Django will raise a ``RuntimeError`` indicating
-that settings have already been configured.
+如果已经调了 ``DJANGO_SETTINGS_MODULE`` ，再调用 ``configure()`` 的话，
+Django也会抛出一个 ``RuntimeError`` 异常，表明已经配置了settings。
 
-Also, it's an error to call ``configure()`` more than once, or to call
-``configure()`` after any setting has been accessed.
+重复调用 ``configure()`` 或是在访问任何一个配置项后再调用 ``configure()`` ，也会引起错误。
 
-It boils down to this: Use exactly one of either ``configure()`` or
-``DJANGO_SETTINGS_MODULE``. Not both, and not neither.
+这意味着：确保要使用 ``configure()`` 或 ``DJANGO_SETTINGS_MODULE`` 其中一个，不要多，也不要少。
 
 .. _@login_required: ../authentication/#the-login-required-decorator
 
