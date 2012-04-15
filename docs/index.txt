@@ -140,7 +140,7 @@ The development process
 =======================
 
 * **Settings:**
-  :doc:`Overview <topics/settings>` |
+  :doc:`Overview/预览 <topics/settings>` |
   :doc:`Full list of settings <ref/settings>`
 
 * **Exceptions:**
@@ -174,7 +174,7 @@ Other batteries included
 * :doc:`Cross Site Request Forgery protection <ref/contrib/csrf>`
 * :doc:`Cryptographic signing <topics/signing>`
 * :doc:`Databrowse <ref/contrib/databrowse>`
-* :doc:`E-mail (sending) <topics/email>`
+* :doc:`E-mail (sending) / 发送邮件 <topics/email>`
 * :doc:`Flatpages <ref/contrib/flatpages>`
 * :doc:`GeoDjango <ref/contrib/gis/index>`
 * :doc:`Humanize <ref/contrib/humanize>`

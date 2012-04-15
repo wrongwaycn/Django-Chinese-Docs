@@ -1,93 +1,72 @@
-=============
-Sending email
-=============
+========
+发送邮件
+========
 
 .. module:: django.core.mail
-   :synopsis: Helpers to easily send email.
+   :synopsis: 易于发送邮件的助手工具
 
-Although Python makes sending email relatively easy via the :mod:`smtplib`
-module, Django provides a couple of light wrappers over it. These wrappers are
-provided to make sending email extra quick, to make it easy to test email
-sending during development, and to provide support for platforms that can't use
-SMTP.
+尽管Python已经提供了相对易用的邮件发送模块 :mod:`smtplib`
+，但Django仍对其做了轻度的封装。封装后的模块不仅发发邮件速度快，而且在开发环境下也很容易对邮件发送进行测试，
+并对不能使用SMTP的平台也提供了支持。
 
-The code lives in the ``django.core.mail`` module.
+封装代码在 ``django.core.mail`` 模块中。
 
-Quick example
-=============
+入门例子
+========
 
-In two lines::
+只有两行::
 
     from django.core.mail import send_mail
 
-    send_mail('Subject here', 'Here is the message.', 'from@example.com',
+    send_mail(u'邮件标题', u'邮件内容', 'from@example.com',
         ['to@example.com'], fail_silently=False)
 
-Mail is sent using the SMTP host and port specified in the
-:setting:`EMAIL_HOST` and :setting:`EMAIL_PORT` settings. The
-:setting:`EMAIL_HOST_USER` and :setting:`EMAIL_HOST_PASSWORD` settings, if
-set, are used to authenticate to the SMTP server, and the
-:setting:`EMAIL_USE_TLS` setting controls whether a secure connection is used.
+Django发邮件功能要用到配置文件中的 :setting:`EMAIL_HOST` 和 :setting:`EMAIL_PORT` 配置项，分别用来指定发邮件服务器和端口。 
+如果SMTP服务器需要用户认证，还须设置 :setting:`EMAIL_HOST_USER` 和 :setting:`EMAIL_HOST_PASSWORD` 配置项，指定用户名和密码。
+而 :setting:`EMAIL_USE_TLS` 配置项则决定是否使用安全加密链接。
 
 .. note::
 
-    The character set of email sent with ``django.core.mail`` will be set to
-    the value of your :setting:`DEFAULT_CHARSET` setting.
+    由 ``django.core.mail`` 发送的邮件，其字符集都由 :setting:`DEFAULT_CHARSET` 配置项决定。
 
 send_mail()
 ===========
 
 .. function:: send_mail(subject, message, from_email, recipient_list, fail_silently=False, auth_user=None, auth_password=None, connection=None)
 
-The simplest way to send email is using
-``django.core.mail.send_mail()``.
+发邮件的最便捷方式就是使用
+``django.core.mail.send_mail()`` 。
 
-The ``subject``, ``message``, ``from_email`` and ``recipient_list`` parameters
-are required.
+``subject``, ``message``, ``from_email`` and ``recipient_list`` 这四个参数是必须的。
 
-* ``subject``: A string.
-* ``message``: A string.
-* ``from_email``: A string.
-* ``recipient_list``: A list of strings, each an email address. Each
-  member of ``recipient_list`` will see the other recipients in the "To:"
-  field of the email message.
-* ``fail_silently``: A boolean. If it's ``False``, ``send_mail`` will raise
-  an :exc:`smtplib.SMTPException`. See the :mod:`smtplib` docs for a list of
-  possible exceptions, all of which are subclasses of
-  :exc:`~smtplib.SMTPException`.
-* ``auth_user``: The optional username to use to authenticate to the SMTP
-  server. If this isn't provided, Django will use the value of the
-  :setting:`EMAIL_HOST_USER` setting.
-* ``auth_password``: The optional password to use to authenticate to the
-  SMTP server. If this isn't provided, Django will use the value of the
-  :setting:`EMAIL_HOST_PASSWORD` setting.
-* ``connection``: The optional email backend to use to send the mail.
-  If unspecified, an instance of the default backend will be used.
-  See the documentation on :ref:`Email backends <topic-email-backends>`
-  for more details.
+* ``subject``: 字符串，表示邮件标题。
+* ``message``: 字符串，表示邮件内容。
+* ``from_email``: 字符串，表示发件邮箱。
+* ``recipient_list``: 字符串列表，列表中每个成员都是一个邮箱地址，而且每个收件人都会在 "收件人/To:" 栏看到出现在 ``recipient_list`` 中的其他收件人。
+* ``fail_silently``: （可选）布尔值。为 ``False`` 时， ``send_mail`` 会抛出 :exc:`smtplib.SMTPException` 异常。 :mod:`smtplib` 文档列出了所有可能的异常。
+  这些异常都是 :exc:`~smtplib.SMTPException` 的子类。
+* ``auth_user``: （可选）SMTP服务器的认证用户名。没提供该参数的情况下，Django会使用 :setting:`EMAIL_HOST_USER` 配置项的设置。
+* ``auth_password``: （可选）SMTP服务器的认证密码，没提供该参数的情况下，Django会使用 :setting:`EMAIL_HOST_PASSWORD` 配置项的设置。
+* ``connection``: （可选）发送邮件的后端。没提供该参数的情况下，Django会使用默认后端的实例。可查看 :ref:`Email backends <topic-email-backends>` 了解更多细节。
+
 
 send_mass_mail()
 ================
 
 .. function:: send_mass_mail(datatuple, fail_silently=False, auth_user=None, auth_password=None, connection=None)
 
-``django.core.mail.send_mass_mail()`` is intended to handle mass emailing.
+``django.core.mail.send_mass_mail()`` 适合处理群发邮件。
 
-``datatuple`` is a tuple in which each element is in this format::
+``datatuple`` 是一个元组，其中每个元素格式如下::
 
     (subject, message, from_email, recipient_list)
 
-``fail_silently``, ``auth_user`` and ``auth_password`` have the same functions
-as in :meth:`~django.core.mail.send_mail()`.
+``fail_silently``, ``auth_user`` 和 ``auth_password`` 与上面 :meth:`~django.core.mail.send_mail()` 中提到的一样。
 
-Each separate element of ``datatuple`` results in a separate email message.
-As in :meth:`~django.core.mail.send_mail()`, recipients in the same
-``recipient_list`` will all see the other addresses in the email messages'
-"To:" field.
+``datatuple`` 中每个元素都对应一封单独的邮件。与上面 :meth:`~django.core.mail.send_mail()` 一样，出现在
+``recipient_list`` 中的收件人同样会在 "收件人/To:" 字段中看到该邮件的其他所有收件人。
 
-For example, the following code would send two different messages to
-two different sets of recipients; however, only one connection to the
-mail server would be opened::
+举个例子，下面的代码会给双组不同的收件人发送两封不同的邮件；但仅仅打开一次邮件服务器的链接::
 
     message1 = ('Subject here', 'Here is the message', 'from@example.com', ['first@example.com', 'other@example.com'])
     message2 = ('Another Subject', 'Here is another message', 'from@example.com', ['second@test.com'])
@@ -96,56 +75,45 @@ mail server would be opened::
 send_mass_mail() vs. send_mail()
 --------------------------------
 
-The main difference between :meth:`~django.core.mail.send_mass_mail()` and
-:meth:`~django.core.mail.send_mail()` is that
-:meth:`~django.core.mail.send_mail()` opens a connection to the mail server
-each time it's executed, while :meth:`~django.core.mail.send_mass_mail()` uses
-a single connection for all of its messages. This makes
-:meth:`~django.core.mail.send_mass_mail()` slightly more efficient.
+:meth:`~django.core.mail.send_mass_mail()` 和 :meth:`~django.core.mail.send_mail()` 的区别在于：
+:meth:`~django.core.mail.send_mail()` 每发送一封邮件就会打开一次邮件服务器链接，而
+:meth:`~django.core.mail.send_mass_mail()` 则是打开一次链接，发送所有的邮件。 :meth:`~django.core.mail.send_mass_mail()` 明显更高效。
 
 mail_admins()
 =============
 
 .. function:: mail_admins(subject, message, fail_silently=False, connection=None, html_message=None)
 
-``django.core.mail.mail_admins()`` is a shortcut for sending an email to the
-site admins, as defined in the :setting:`ADMINS` setting.
+``django.core.mail.mail_admins()`` 是一个给网站后台管理员(admin)发邮件的快捷方法，管理员设置放在 :setting:`ADMINS` 配置项。
 
-``mail_admins()`` prefixes the subject with the value of the
-:setting:`EMAIL_SUBJECT_PREFIX` setting, which is ``"[Django] "`` by default.
+``mail_admins()`` 使用 :setting:`EMAIL_SUBJECT_PREFIX` 配置项的值做为邮件标题的前缀，默认情况下是 ``"[Django] "`` 。
 
-The "From:" header of the email will be the value of the
-:setting:`SERVER_EMAIL` setting.
+邮件的"From:"头的内容就是 :setting:`SERVER_EMAIL` 配置项的值。
 
-This method exists for convenience and readability.
+该方法方便使用且易于理解。
 
 .. versionchanged:: 1.3
 
-If ``html_message`` is provided, the resulting email will be a
-:mimetype:`multipart/alternative` email with ``message`` as the
-:mimetype:`text/plain` content type and ``html_message`` as the
-:mimetype:`text/html` content type.
+如果提供了 ``html_message`` 参数，会导致邮件变成 :mimetype:`multipart/alternative` ， ``message`` 格式变成
+:mimetype:`text/plain` ， ``html_message`` 格式变成 :mimetype:`text/html` 。
 
 mail_managers()
 ===============
 
 .. function:: mail_managers(subject, message, fail_silently=False, connection=None, html_message=None)
 
-``django.core.mail.mail_managers()`` is just like ``mail_admins()``, except it
-sends an email to the site managers, as defined in the :setting:`MANAGERS`
-setting.
+``django.core.mail.mail_managers()`` is just like ``mail_admins()``，不同之处在于该方法的邮件接收人是网站负责人(manager)，
+可以在 :setting:`MANAGERS` 配置项设置网站负责人。
 
-Examples
-========
+例子
+====
 
-This sends a single email to john@example.com and jane@example.com, with them
-both appearing in the "To:"::
+该例同时给 john@example.com 和 jane@example.com 发送同一封邮件，这两个邮箱地址都会出现在 "收件人/To:" 一栏::
 
     send_mail('Subject', 'Message.', 'from@example.com',
         ['john@example.com', 'jane@example.com'])
 
-This sends a message to john@example.com and jane@example.com, with them both
-receiving a separate email::
+该例则是分别为 john@example.com 和 jane@example.com 分别发送同一封邮件，每人收到的邮件只显示唯一一个收件人::
 
     datatuple = (
         ('Subject', 'Message.', 'from@example.com', ['john@example.com']),
@@ -153,27 +121,20 @@ receiving a separate email::
     )
     send_mass_mail(datatuple)
 
-Preventing header injection
-===========================
+防止邮件头注入
+==============
 
-`Header injection`_ is a security exploit in which an attacker inserts extra
-email headers to control the "To:" and "From:" in email messages that your
-scripts generate.
+`Header injection`_ (邮件头信息注入)是可以被骇客（黑客hacker是指伟大的程序员，骇客Cracker和Attacker是指无知无耻的狗盗之辈）利用的安全漏洞。
+他们会利用该漏洞，在代码生成的邮件信息中添加额外的邮件头信息(header)以控制 "收件人/To:" 和 "发件人/From:" 。
 
-The Django email functions outlined above all protect against header injection
-by forbidding newlines in header values. If any ``subject``, ``from_email`` or
-``recipient_list`` contains a newline (in either Unix, Windows or Mac style),
-the email function (e.g. :meth:`~django.core.mail.send_mail()`) will raise
-``django.core.mail.BadHeaderError`` (a subclass of ``ValueError``) and, hence,
-will not send the email. It's your responsibility to validate all data before
-passing it to the email functions.
+之前所提及的Django邮件函式都禁止在头信息中添加换行，从而避免注入。只要 ``subject`` , ``from_email`` 和 ``recipient_list`` 包含换行（不管是Windows格式，还是Unix或是Mac OS 格式）
+，发送函式 (比如 :meth:`~django.core.mail.send_mail()`) 都会抛出 ``django.core.mail.BadHeaderError`` 异常( ``ValueError`` 的一个子类)，也不会发送该邮件。
+因此在给邮件函式传递参数之前，一定要对所有数据进行验证。
 
-If a ``message`` contains headers at the start of the string, the headers will
-simply be printed as the first bit of the email message.
+如果 ``message`` 在文本最开始处含有头信息，那么这些头信息就会被打印成邮件内容的第一个比特。
 
-Here's an example view that takes a ``subject``, ``message`` and ``from_email``
-from the request's POST data, sends that to admin@example.com and redirects to
-"/contact/thanks/" when it's done::
+下面这个view例子， ``subject`` ， ``message`` 和 ``from_email`` 从request POST中取值，然后发送邮件到 admin@example.com，
+发送成功后重定向到"/contact/thanks/"::
 
     from django.core.mail import send_mail, BadHeaderError
 
@@ -196,146 +157,105 @@ from the request's POST data, sends that to admin@example.com and redirects to
 
 .. _emailmessage-and-smtpconnection:
 
-The EmailMessage class
-======================
+EmailMessage类
+==============
 
-Django's :meth:`~django.core.mail.send_mail()` and
-:meth:`~django.core.mail.send_mass_mail()` functions are actually thin
-wrappers that make use of the :class:`~django.core.mail.EmailMessage` class.
+Django的 :meth:`~django.core.mail.send_mail()` 和 :meth:`~django.core.mail.send_mass_mail()` 函式事实上是对 :class:`~django.core.mail.EmailMessage` 类使用方式
+的一个轻度封装。
 
-Not all features of the :class:`~django.core.mail.EmailMessage` class are
-available through the :meth:`~django.core.mail.send_mail()` and related
-wrapper functions. If you wish to use advanced features, such as BCC'ed
-recipients, file attachments, or multi-part email, you'll need to create
-:class:`~django.core.mail.EmailMessage` instances directly.
+:meth:`~django.core.mail.send_mail()` 和相关的其他封装函式并没有充分使用 :class:`~django.core.mail.EmailMessage` 类的所有特性。
+要想使用更多特性，比如暗送(BCC)给收件人，加入附件，或是多用途格式(multi-part)邮件，都要直接创建 :class:`~django.core.mail.EmailMessage` 实例。
 
 .. note::
-    This is a design feature. :meth:`~django.core.mail.send_mail()` and
-    related functions were originally the only interface Django provided.
-    However, the list of parameters they accepted was slowly growing over
-    time. It made sense to move to a more object-oriented design for email
-    messages and retain the original functions only for backwards
-    compatibility.
+    这是一个设计特性： :meth:`~django.core.mail.send_mail()` 和其他相关函式是最初只是由Django提供的一组接口。
+    但是其接收的参数数量却随着Django的发展而慢慢增长。这样就能理解为什么要将邮件报文使用面向对象设计重新设计，同时又保留原有函式以保证后端兼容，
 
-:class:`~django.core.mail.EmailMessage` is responsible for creating the email
-message itself. The :ref:`email backend <topic-email-backends>` is then
-responsible for sending the email.
+:class:`~django.core.mail.EmailMessage` 仅仅负责创建邮件报文，而 :ref:`email backend <topic-email-backends>` 则负责邮件发送。
 
-For convenience, :class:`~django.core.mail.EmailMessage` provides a simple
-``send()`` method for sending a single email. If you need to send multiple
-messages, the email backend API :ref:`provides an alternative
+为了方便起见， :class:`~django.core.mail.EmailMessage` 提供了一个简单的 ``send()`` 方法用以发送纯文本邮件。如果想发送多用途格式邮件，可以使用后端API :ref:`发送多用途邮件
 <topics-sending-multiple-emails>`.
 
-EmailMessage Objects
---------------------
+EmailMessage 对象
+-----------------
 
 .. class:: EmailMessage
 
-The :class:`~django.core.mail.EmailMessage` class is initialized with the
-following parameters (in the given order, if positional arguments are used).
-All parameters are optional and can be set at any time prior to calling the
-``send()`` method.
+:class:`~django.core.mail.EmailMessage` 类使用下列参数初始化（除非使用位置参数，否则默认顺序如下）。所有参数均可选，均可在调用 ``send()`` 方法之前的任何时间对其赋值。
 
 .. versionchanged:: 1.3
-   The ``cc`` argument was added.
+   加入了 ``cc`` 参数（cc是抄送）
 
-* ``subject``: The subject line of the email.
+* ``subject``: 邮件的标题行
 
-* ``body``: The body text. This should be a plain text message.
+* ``body``: 邮件的主体内容文本，须是纯文本信息。
 
-* ``from_email``: The sender's address. Both ``fred@example.com`` and
-  ``Fred <fred@example.com>`` forms are legal. If omitted, the
-  :setting:`DEFAULT_FROM_EMAIL` setting is used.
+* ``from_email``: 发送者的地址。 ``fred@example.com`` 或
+  ``Fred <fred@example.com>`` 格式都是合法的。如果忽略该参数，Django就会使用
+  :setting:`DEFAULT_FROM_EMAIL` 配置项。
 
-* ``to``: A list or tuple of recipient addresses.
+* ``to``: 收件人地址列表或元组。
 
-* ``bcc``: A list or tuple of addresses used in the "Bcc" header when
-  sending the email.
+* ``bcc``: 发送邮件时用于"Bcc"头信息的一组列表或元组，也就是暗送的收件人。
 
-* ``connection``: An email backend instance. Use this parameter if
-  you want to use the same connection for multiple messages. If omitted, a
-  new connection is created when ``send()`` is called.
+* ``connection``: 一个邮件后端实例。用同一个链接发送多封邮件就要用到该参数。忽略该参数时，会在调用 ``send()`` 时自动创建一个新链接。
 
-* ``attachments``: A list of attachments to put on the message. These can
-  be either ``email.MIMEBase.MIMEBase`` instances, or ``(filename,
-  content, mimetype)`` triples.
+* ``attachments``: 置于邮件报文内的附件列表。列表元素可以是　``email.MIMEBase.MIMEBase`` 实例，也可以是 ``(filename,
+  content, mimetype)`` 三部分构成的元组。
 
-* ``headers``: A dictionary of extra headers to put on the message. The
-  keys are the header name, values are the header values. It's up to the
-  caller to ensure header names and values are in the correct format for
-  an email message.
+* ``headers``: 置于邮件信息内的其他头信息(header)的字典。字典的key是头信息的名称，字典的value是头信息的值。
+  这样做能确保头信息的名称和对应值会以正确的格式保存于邮件报文中。
 
-* ``cc``: A list or tuple of recipient addresses used in the "Cc" header
-  when sending the email.
+* ``cc``: 发送邮件时放于"Cc"头信息的一系列列表或元组。
 
-For example::
+例如::
 
     email = EmailMessage('Hello', 'Body goes here', 'from@example.com',
                 ['to1@example.com', 'to2@example.com'], ['bcc@example.com'],
                 headers = {'Reply-To': 'another@example.com'})
 
-The class has the following methods:
+该类方法如下:
 
-* ``send(fail_silently=False)`` sends the message. If a connection was
-  specified when the email was constructed, that connection will be used.
-  Otherwise, an instance of the default backend will be instantiated and
-  used. If the keyword argument ``fail_silently`` is ``True``, exceptions
-  raised while sending the message will be quashed.
+* ``send(fail_silently=False)`` 发送邮件信息。如果在构造邮件时如果指定了某个链接(connection)，就会使用该链接发邮件。
+  否则，就会使用默认后端的实例发邮件。如果关键字参数 ``fail_silently`` 为 ``True`` ，就会忽略邮件发送时抛出的异常。
 
-* ``message()`` constructs a ``django.core.mail.SafeMIMEText`` object (a
-  subclass of Python's ``email.MIMEText.MIMEText`` class) or a
-  ``django.core.mail.SafeMIMEMultipart`` object holding the message to be
-  sent. If you ever need to extend the
-  :class:`~django.core.mail.EmailMessage` class, you'll probably want to
-  override this method to put the content you want into the MIME object.
+* ``message()`` 构造了一个 ``django.core.mail.SafeMIMEText`` 对象 (Python的 ``email.MIMEText.MIMEText`` 类的子类) 或是
+  ``django.core.mail.SafeMIMEMultipart`` 对象（该对象保存即将发送出去邮件报文）。如需扩展
+  :class:`~django.core.mail.EmailMessage` 类，一般情况下要覆写该方法，将你所需的内容添加到MIME对象中。
 
-* ``recipients()`` returns a list of all the recipients of the message,
-  whether they're recorded in the ``to`` or ``bcc`` attributes. This is
-  another method you might need to override when subclassing, because the
-  SMTP server needs to be told the full list of recipients when the message
-  is sent. If you add another way to specify recipients in your class, they
-  need to be returned from this method as well.
+* ``recipients()`` 返回邮件中所有收件人的列表，不管收件人是在 ``to`` 还是 ``bcc`` 属性中。这是另一个经常被继承覆写的方法，
+  因为SMTP服务器在发送邮件报文时，要接收完整的收件人列表。即使你自己的类使用其他方式来指定收件人，也仍然需要使用该方法返回收件人列表。
 
-* ``attach()`` creates a new file attachment and adds it to the message.
-  There are two ways to call ``attach()``:
+* ``attach()`` 创建一个新的文件附件，并把它添加到邮件报文中。
+  有两种方法调用 ``attach()``:
 
-  * You can pass it a single argument that is an
-    ``email.MIMEBase.MIMEBase`` instance. This will be inserted directly
-    into the resulting message.
+  * 传递一个单独的
+    ``email.MIMEBase.MIMEBase`` 实例做为参数。该实例会直接添加到最终的邮件报文中。
 
-  * Alternatively, you can pass ``attach()`` three arguments:
-    ``filename``, ``content`` and ``mimetype``. ``filename`` is the name
-    of the file attachment as it will appear in the email, ``content`` is
-    the data that will be contained inside the attachment and
-    ``mimetype`` is the optional MIME type for the attachment. If you
-    omit ``mimetype``, the MIME content type will be guessed from the
-    filename of the attachment.
+  * 或者，给 ``attach()`` 传递三个参数:
+    ``filename``, ``content`` 和 ``mimetype``. ``filename`` 是出现在邮件中的附件文件的名称，
+    ``content`` 是附件的内容，而
+    ``mimetype`` 是附件所使用的MIME类型。 如果忽略
+    ``mimetype``, Django会自动根据附件文件名来推测MIME内容类型。
 
-    For example::
+    例如::
 
        message.attach('design.png', img_data, 'image/png')
 
-* ``attach_file()`` creates a new attachment using a file from your
-  filesystem. Call it with the path of the file to attach and, optionally,
-  the MIME type to use for the attachment. If the MIME type is omitted, it
-  will be guessed from the filename. The simplest use would be::
+* ``attach_file()`` 使用当前文件系统下的某个文件做为附件。调用时，传入某个文件的完整路径，以及该附件的MIME类型(可选的)。
+  忽略MIME类型的话，Django会自动根据附件文件名来推测MIME类型。最简单的用法如下::
 
     message.attach_file('/images/weather_map.png')
 
 .. _DEFAULT_FROM_EMAIL: ../settings/#default-from-email
 
-Sending alternative content types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+发送多用途邮件
+~~~~~~~~~~~~~~
 
-It can be useful to include multiple versions of the content in an email; the
-classic example is to send both text and HTML versions of a message. With
-Django's email library, you can do this using the ``EmailMultiAlternatives``
-class. This subclass of :class:`~django.core.mail.EmailMessage` has an
-``attach_alternative()`` method for including extra versions of the message
-body in the email. All the other methods (including the class initialization)
-are inherited directly from :class:`~django.core.mail.EmailMessage`.
+在同一封邮件中包含多种版本的内容是非常有用的；典型的例子就是发送既有纯文本版本内容又有HTML版本内容的邮件。
+在Django的邮件库中，可以使用 ``EmailMultiAlternatives`` 类来达到该目的。 :class:`~django.core.mail.EmailMessage` 的子类有一个
+``attach_alternative()`` 方法用来包含其他版本的邮件主体内容。所有其他方法(包括类的初始化方法)都直接继承自 :class:`~django.core.mail.EmailMessage` 。
 
-To send a text and HTML combination, you could write::
+发送一封文本/HTML混合邮件，代码如下::
 
     from django.core.mail import EmailMultiAlternatives
 
@@ -346,267 +266,217 @@ To send a text and HTML combination, you could write::
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
-By default, the MIME type of the ``body`` parameter in an
-:class:`~django.core.mail.EmailMessage` is ``"text/plain"``. It is good
-practice to leave this alone, because it guarantees that any recipient will be
-able to read the email, regardless of their mail client. However, if you are
-confident that your recipients can handle an alternative content type, you can
-use the ``content_subtype`` attribute on the
-:class:`~django.core.mail.EmailMessage` class to change the main content type.
-The major type will always be ``"text"``, but you can change the
-subtype. For example::
+默认情况下，:class:`~django.core.mail.EmailMessage` 类中的 ``body`` 参数的MIME类型是 ``"text/plain"`` 。
+大多数情况下，没必要更改该MIME，因为这样能保证每个收件人能够阅读该邮件，而不论他们使用的是什么邮件客户端。
+不过，在能确保收件人能处理多用途邮件的情况下，可以使用:class:`~django.core.mail.EmailMessage` 类的 ``content_subtype`` 属性
+来更改邮件内容类型。主类型总是 ``"text"`` ，子类型可以设置为别的版本(比如html)，例如::
 
     msg = EmailMessage(subject, html_content, from_email, [to])
-    msg.content_subtype = "html"  # Main content is now text/html
+    msg.content_subtype = "html"  # 主内体现在变成 text/html
     msg.send()
 
 .. _topic-email-backends:
 
-Email backends
-==============
+Email backends 邮件发送后端
+===========================
 
 .. versionadded:: 1.2
 
-The actual sending of an email is handled by the email backend.
+实际上发送邮件的工作是由邮件发送后端处理的。
 
-The email backend class has the following methods:
+邮件后端类有下列方法：
 
-* ``open()`` instantiates an long-lived email-sending connection.
+* ``open()`` 实例化一个长生命周期的邮件发送链接。
 
-* ``close()`` closes the current email-sending connection.
+* ``close()`` 关闭当前邮件发送链接。
 
-* ``send_messages(email_messages)`` sends a list of
-  :class:`~django.core.mail.EmailMessage` objects. If the connection is
-  not open, this call will implicitly open the connection, and close the
-  connection afterwards. If the connection is already open, it will be
-  left open after mail has been sent.
+* ``send_messages(email_messages)`` 发送一组
+  :class:`~django.core.mail.EmailMessage` 对象的列表。如果链接(connection)还未打开，该调用会隐性地打开链接，发完邮件后就关闭该链接。
+  如果该链接已经打开，那么它会保持打开状态直至邮件发送完毕。
 
-Obtaining an instance of an email backend
------------------------------------------
+获取邮件发送后端的实例
+----------------------
 
-The :meth:`get_connection` function in ``django.core.mail`` returns an
-instance of the email backend that you can use.
+``django.core.mail`` 的 :meth:`get_connection` 函式返回你当前使用的邮件后端的实例。
 
 .. currentmodule:: django.core.mail
 
 .. function:: get_connection(backend=None, fail_silently=False, *args, **kwargs)
 
-By default, a call to ``get_connection()`` will return an instance of the
-email backend specified in :setting:`EMAIL_BACKEND`. If you specify the
-``backend`` argument, an instance of that backend will be instantiated.
+默认情况下，对 ``get_connection()`` 的调用会返回一个邮件后端实例，具体是哪个后端由 :setting:`EMAIL_BACKEND` 配置项决定。
+如果指定了``backend`` 参数，就会对该后端进行实例化。
 
-The ``fail_silently`` argument controls how the backend should handle errors.
-If ``fail_silently`` is True, exceptions during the email sending process
-will be silently ignored.
+``fail_silently`` 参数决定后端如何处理错误。
+如果 ``fail_silently`` 为 True ，发送邮件进程引发的异常将会被忽略。
 
-All other arguments are passed directly to the constructor of the
-email backend.
+其他的所有参数都会被直接传递给邮件后端的构造函式
 
-Django ships with several email sending backends. With the exception of the
-SMTP backend (which is the default), these backends are only useful during
-testing and development. If you have special email sending requirements, you
-can :ref:`write your own email backend <topic-custom-email-backend>`.
+Django提供了几种不同的邮件发送后端。除了SMTP backend之外（也是默认的邮件发送后端），
+其他后端仅适用于测试和开发过程。如果有特珠的邮件发送要求，可以 :ref:`编写自己的邮件发送后端 <topic-custom-email-backend>`.
 
 .. _topic-email-smtp-backend:
 
 SMTP backend
 ~~~~~~~~~~~~
 
-This is the default backend. Email will be sent through a SMTP server.
-The server address and authentication credentials are set in the
+SMTP后端，这也是默认的后端(backend)。邮件会通过SMTP服务器进行发送。服务器地址和认证凭证都由配置文件中的
 :setting:`EMAIL_HOST`, :setting:`EMAIL_PORT`, :setting:`EMAIL_HOST_USER`,
-:setting:`EMAIL_HOST_PASSWORD` and :setting:`EMAIL_USE_TLS` settings in your
-settings file.
+:setting:`EMAIL_HOST_PASSWORD` 和 :setting:`EMAIL_USE_TLS` 配置项来指定。
 
-The SMTP backend is the default configuration inherited by Django. If you
-want to specify it explicitly, put the following in your settings::
+SMTP后端是Django默认的配置。若想明确指定，可配置文件中进行如下配置::
 
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-.. admonition:: SMTPConnection objects
+.. admonition:: SMTPConnection 对象
 
-    Prior to version 1.2, Django provided a
-    :class:`~django.core.mail.SMTPConnection` class. This class provided a way
-    to directly control the use of SMTP to send email. This class has been
-    deprecated in favor of the generic email backend API.
+    在Django1.2以前，Django提供了一个
+    :class:`~django.core.mail.SMTPConnection` 类。该类提供了一套直接控制SMTP用以发送邮件的方式。
+    该类已经被弃用了，Django转而使用更通用的邮件后端API。
 
-    For backwards compatibility :class:`~django.core.mail.SMTPConnection` is
-    still available in ``django.core.mail`` as an alias for the SMTP backend.
-    New code should use :meth:`~django.core.mail.get_connection` instead.
+    出于向上兼容性的考虑， :class:`~django.core.mail.SMTPConnection` 仍然保留在 ``django.core.mail`` 中，做为SMTP backend的别名。
+    新代码应该使用 :meth:`~django.core.mail.get_connection` 以代替。
 
 .. _topic-email-console-backend:
 
 Console backend
 ~~~~~~~~~~~~~~~
 
-Instead of sending out real emails the console backend just writes the
-emails that would be send to the standard output. By default, the console
-backend writes to ``stdout``. You can use a different stream-like object by
-providing the ``stream`` keyword argument when constructing the connection.
+控制台后端。控制台后端并不会发送真实的邮件，而是仅仅将邮件内容发送到标准输出。默认情况下，
+控制台后端会写到 ``stdout`` 。可以在构造链接时提供 ``stream`` 关键字参数以使用不同的类流(stream-like)对象
 
-To specify this backend, put the following in your settings::
+要指定该后端，只要在配置文件中设置::
 
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-This backend is not intended for use in production -- it is provided as a
-convenience that can be used during development.
+该后端并不建议在生产环境下使用--它仅仅是为开发提供方便。
 
 .. _topic-email-file-backend:
 
 File backend
 ~~~~~~~~~~~~
 
-The file backend writes emails to a file. A new file is created for each new
-session that is opened on this backend. The directory to which the files are
-written is either taken from the :setting:`EMAIL_FILE_PATH` setting or from
-the ``file_path`` keyword when creating a connection with
-:meth:`~django.core.mail.get_connection`.
+文件后端。文件后端将邮件写到一个文件中，在该后端中，每打开一个新session，就会创建一个新文件。文件存放在哪个目录下是由
+:setting:`EMAIL_FILE_PATH` 配置项或是在使用 :meth:`~django.core.mail.get_connection` 创建链接(connection)时由 ``file_path`` 关键字决定。
 
-To specify this backend, put the following in your settings::
+要指定该后端，只要在配置文件中设置::
 
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = '/tmp/app-messages' # change this to a proper location
+    EMAIL_FILE_PATH = '/tmp/app-messages' # 将其改为本地的存放目录
 
-This backend is not intended for use in production -- it is provided as a
-convenience that can be used during development.
+该后端并不建议在生产环境下使用--它仅仅是为开发提供方便。
 
 .. _topic-email-memory-backend:
 
 In-memory backend
 ~~~~~~~~~~~~~~~~~
 
-The ``'locmem'`` backend stores messages in a special attribute of the
-``django.core.mail`` module. The ``outbox`` attribute is created when the
-first message is sent. It's a list with an
-:class:`~django.core.mail.EmailMessage` instance for each message that would
-be send.
+内存后端。 ``'locmem'`` 后端将邮件信息保存到
+``django.core.mail`` 模块的一个特定属性 ``outbox`` 中。发送第一封邮件时， ``outbox`` 属性就会被创建。
+该属性是一个列表，每个
+:class:`~django.core.mail.EmailMessage` 实例的邮件报文都会添加到该列表中。
 
-To specify this backend, put the following in your settings::
+要指定该后端，只要在配置文件中设置::
 
   EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
-This backend is not intended for use in production -- it is provided as a
-convenience that can be used during development and testing.
+该后端并不建议在生产环境下使用--它仅仅是为开发和测试提供方便。
 
 .. _topic-email-dummy-backend:
 
 Dummy backend
 ~~~~~~~~~~~~~
 
-As the name suggests the dummy backend does nothing with your messages. To
-specify this backend, put the following in your settings::
+空后端。如名所示，该后端不会做任何事情。要指定该后端，只要在配置文件中设置::
 
    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
-This backend is not intended for use in production -- it is provided as a
-convenience that can be used during development.
+该后端并不建议在生产环境下使用--它仅仅是为开发提供方便。
 
 .. _topic-custom-email-backend:
 
-Defining a custom email backend
--------------------------------
+自定义邮件发送后端
+------------------
 
-If you need to change how emails are sent you can write your own email
-backend. The :setting:`EMAIL_BACKEND` setting in your settings file is then
-the Python import path for your backend class.
+如果要改变邮件的发送方式，可以自己写一个邮件发送后端。
+将 :setting:`EMAIL_BACKEND` 配置项设为自定义后端的python引用路径。
 
-Custom email backends should subclass ``BaseEmailBackend`` that is located in
-the ``django.core.mail.backends.base`` module. A custom email backend must
-implement the ``send_messages(email_messages)`` method. This method receives a
-list of :class:`~django.core.mail.EmailMessage` instances and returns the
-number of successfully delivered messages. If your backend has any concept of
-a persistent session or connection, you should also implement the ``open()``
-and ``close()`` methods. Refer to ``smtp.EmailBackend`` for a reference
-implementation.
+自定义邮件后端应该继承 ``BaseEmailBackend`` ，该类位于 ``django.core.mail.backends.base`` 模块。
+自定义邮件后端必须实现 ``send_messages(email_messages)`` 方法。该方法接收一个列表，列表元素是
+:class:`~django.core.mail.EmailMessage` 实例，并返回一组发送成功的消息。
+如果自定义后端还涉及持久化session或connection，还应该实现 ``open()`` 和
+``close()`` 方法。 ``smtp.EmailBackend`` 可以做为一个现成的参考。
 
 .. _topics-sending-multiple-emails:
 
-Sending multiple emails
------------------------
+发送多封邮件
+------------
 
-Establishing and closing an SMTP connection (or any other network connection,
-for that matter) is an expensive process. If you have a lot of emails to send,
-it makes sense to reuse an SMTP connection, rather than creating and
-destroying a connection every time you want to send an email.
+建立和关闭一个SMTP链接(connection)是一个代价高昂的过程（对于这种情况，任何网络链接都是如此）。
+因此要想发送更多邮件，重用SMTP链接就显得很有意义；而不是每次发送一封邮件，都要创建和销毁一个链接。
 
-There are two ways you tell an email backend to reuse a connection.
+有两种方式可以重用链接。
 
-Firstly, you can use the ``send_messages()`` method. ``send_messages()`` takes
-a list of :class:`~django.core.mail.EmailMessage` instances (or subclasses),
-and sends them all using a single connection.
+第一种方式，可以使用 ``send_messages()`` 方法。 ``send_messages()`` 接收一个 :class:`~django.core.mail.EmailMessage` (或是子类)实例的列表，
+然后用单独一个链接来发送列表中的内容。
 
-For example, if you have a function called ``get_notification_email()`` that
-returns a list of :class:`~django.core.mail.EmailMessage` objects representing
-some periodic email you wish to send out, you could send these emails using
-a single call to send_messages::
+例如，你有一个名为 ``get_notification_email()`` 的函式，用以定时发送邮件，它返回一个 :class:`~django.core.mail.EmailMessage` 对象的列表。
+调用一次 send_messages 就可以发送完这些邮件::
 
     from django.core import mail
-    connection = mail.get_connection()   # Use default email connection
+    connection = mail.get_connection()   # 使用默认邮件链接(connection)
     messages = get_notification_email()
     connection.send_messages(messages)
 
-In this example, the call to ``send_messages()`` opens a connection on the
-backend, sends the list of messages, and then closes the connection again.
+在这个例子中，调用 ``send_messages()`` 会在后端打开一个链接(connection)，发送列表中的邮件报文，然后再关闭链接。
 
-The second approach is to use the ``open()`` and ``close()`` methods on the
-email backend to manually control the connection. ``send_messages()`` will not
-manually open or close the connection if it is already open, so if you
-manually open the connection, you can control when it is closed. For example::
+第二种方式是在邮件后端使用 ``open()`` 和 ``close()`` 方法手动控制链接。
+在已经打开链接的情况下， ``send_messages()`` 不会自动打开和关闭链接。因此在该情况下，要手动决定何时关闭链接。 举个例子::
 
     from django.core import mail
     connection = mail.get_connection()
 
-    # Manually open the connection
+    # 手动打开链接(connection)
     connection.open()
 
-    # Construct an email message that uses the connection
+    # 使用该链接构造一个邮件报文
     email1 = mail.EmailMessage('Hello', 'Body goes here', 'from@example.com',
                               ['to1@example.com'], connection=connection)
-    email1.send() # Send the email
+    email1.send() # 发送邮件
 
-    # Construct two more messages
+    # 构造其他两个报文
     email2 = mail.EmailMessage('Hello', 'Body goes here', 'from@example.com',
                               ['to2@example.com'])
     email3 = mail.EmailMessage('Hello', 'Body goes here', 'from@example.com',
                               ['to3@example.com'])
 
-    # Send the two emails in a single call -
+    # 在一个调用中发送两封邮件
     connection.send_messages([email2, email3])
-    # The connection was already open so send_messages() doesn't close it.
-    # We need to manually close the connection.
+    # 链接已打开，因此 send_messages() 不会关闭链接
+    # 要手动关闭链接
     connection.close()
 
 
-Testing email sending
-=====================
+测试邮件发送
+============
 
-There are times when you do not want Django to send emails at
-all. For example, while developing a Web site, you probably don't want
-to send out thousands of emails -- but you may want to validate that
-emails will be sent to the right people under the right conditions,
-and that those emails will contain the correct content.
+有几种情况下，我们并不想让Django发送邮件。比如：开发网站时，一般不想发送数以千计的邮件，但又想验证一下在正确环境下邮件是否会发送给目标人群，
+以及这些邮件内容是否正确。
 
-The easiest way to test your project's use of email is to use the ``console``
-email backend. This backend redirects all email to stdout, allowing you to
-inspect the content of mail.
+测试发送邮件的最简单方式就是使用 ``console`` 邮件发送后端。它直接将所有邮件输出到stdout，从而可以检查邮件内容是否正确。
 
-The ``file`` email backend can also be useful during development -- this backend
-dumps the contents of every SMTP connection to a file that can be inspected
-at your leisure.
+``file`` 后端在开发过程中也非常有用--它将每封邮件的内容都写到一个指定的文件中，从而方便检查。
 
-Another approach is to use a "dumb" SMTP server that receives the emails
-locally and displays them to the terminal, but does not actually send
-anything. Python has a built-in way to accomplish this with a single command::
+还有一种方式是使用 "dumb" SMTP 服务器，它在本地接收所有邮件，并在终端显示出邮件，但事实上不能发送任何邮件。
+Python有一个内置的方式可以实现该服务，只须一条命令行::
 
     python -m smtpd -n -c DebuggingServer localhost:1025
 
-This command will start a simple SMTP server listening on port 1025 of
-localhost. This server simply prints to standard output all email headers and
-the email body. You then only need to set the :setting:`EMAIL_HOST` and
-:setting:`EMAIL_PORT` accordingly, and you are set.
+该命令会启动一个简单的SMTP服务器，用以监听本地的1025端口。该服务器简单的将所有邮件的头信息和邮件主体打印到标准输出。
+然后只须更改
+:setting:`EMAIL_HOST` 和
+:setting:`EMAIL_PORT` 即可。
 
-For a more detailed discussion of testing and processing of emails locally,
-see the Python documentation for the :mod:`smtpd` module.
+更多关于本地测试和处理邮件的细节资料，请查看Python文档 :mod:`smtpd` 模块。
 
 SMTPConnection
 ==============
@@ -615,10 +485,9 @@ SMTPConnection
 
 .. deprecated:: 1.2
 
-The ``SMTPConnection`` class has been deprecated in favor of the generic email
-backend API.
+``SMTPConnection`` 类已弃用，转而使用通用邮件后端(backend)API。
 
-For backwards compatibility ``SMTPConnection`` is still available in
-``django.core.mail`` as an alias for the :ref:`SMTP backend
-<topic-email-smtp-backend>`. New code should use
-:meth:`~django.core.mail.get_connection` instead.
+出于向上兼容性的考虑， ``SMTPConnection`` 仍然保留在
+``django.core.mail`` 中，且做为 :ref:`SMTP backend
+<topic-email-smtp-backend>`. 的别名。新代码应该使用
+:meth:`~django.core.mail.get_connection` 取代。
