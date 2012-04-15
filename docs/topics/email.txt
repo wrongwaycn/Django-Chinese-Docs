@@ -6,8 +6,8 @@
    :synopsis: 易于发送邮件的助手工具
 
 尽管Python已经提供了相对易用的邮件发送模块 :mod:`smtplib`
-，但Django仍对其做了轻度的封装。封装后的模块不仅发发邮件速度快，而且在开发环境下也很容易对邮件发送进行测试，
-并对不能使用SMTP的平台也提供了支持。
+，但Django仍对其做了轻度的封装。封装后的模块不仅发送邮件速度快，而且在开发环境下也很容易对邮件发送进行测试，
+并对无法使用SMTP的平台也提供了支持。
 
 封装代码在 ``django.core.mail`` 模块中。
 
@@ -102,7 +102,7 @@ mail_managers()
 
 .. function:: mail_managers(subject, message, fail_silently=False, connection=None, html_message=None)
 
-``django.core.mail.mail_managers()`` is just like ``mail_admins()``，不同之处在于该方法的邮件接收人是网站负责人(manager)，
+``django.core.mail.mail_managers()`` is just like ``mail_admins()`` ，不同之处在于该方法的邮件接收人是网站负责人(manager)，
 可以在 :setting:`MANAGERS` 配置项设置网站负责人。
 
 例子
@@ -125,7 +125,7 @@ mail_managers()
 ==============
 
 `Header injection`_ (邮件头信息注入)是可以被骇客（黑客hacker是指伟大的程序员，骇客Cracker和Attacker是指无知无耻的狗盗之辈）利用的安全漏洞。
-他们会利用该漏洞，在代码生成的邮件信息中添加额外的邮件头信息(header)以控制 "收件人/To:" 和 "发件人/From:" 。
+他们会利用该漏洞，在代码生成的邮件报文中添加额外的邮件头信息(header)以控制 "收件人/To:" 和 "发件人/From:" 。
 
 之前所提及的Django邮件函式都禁止在头信息中添加换行，从而避免注入。只要 ``subject`` , ``from_email`` 和 ``recipient_list`` 包含换行（不管是Windows格式，还是Unix或是Mac OS 格式）
 ，发送函式 (比如 :meth:`~django.core.mail.send_mail()`) 都会抛出 ``django.core.mail.BadHeaderError`` 异常( ``ValueError`` 的一个子类)，也不会发送该邮件。
@@ -202,7 +202,7 @@ EmailMessage 对象
 * ``attachments``: 置于邮件报文内的附件列表。列表元素可以是　``email.MIMEBase.MIMEBase`` 实例，也可以是 ``(filename,
   content, mimetype)`` 三部分构成的元组。
 
-* ``headers``: 置于邮件信息内的其他头信息(header)的字典。字典的key是头信息的名称，字典的value是头信息的值。
+* ``headers``: 置于邮件报文内的其他头信息(header)的字典。字典的key是头信息的名称，字典的value是头信息的值。
   这样做能确保头信息的名称和对应值会以正确的格式保存于邮件报文中。
 
 * ``cc``: 发送邮件时放于"Cc"头信息的一系列列表或元组。
@@ -215,7 +215,7 @@ EmailMessage 对象
 
 该类方法如下:
 
-* ``send(fail_silently=False)`` 发送邮件信息。如果在构造邮件时如果指定了某个链接(connection)，就会使用该链接发邮件。
+* ``send(fail_silently=False)`` 发送邮件报文。如果在构造邮件时如果指定了某个链接(connection)，就会使用该链接发邮件。
   否则，就会使用默认后端的实例发邮件。如果关键字参数 ``fail_silently`` 为 ``True`` ，就会忽略邮件发送时抛出的异常。
 
 * ``message()`` 构造了一个 ``django.core.mail.SafeMIMEText`` 对象 (Python的 ``email.MIMEText.MIMEText`` 类的子类) 或是
@@ -370,7 +370,7 @@ File backend
 In-memory backend
 ~~~~~~~~~~~~~~~~~
 
-内存后端。 ``'locmem'`` 后端将邮件信息保存到
+内存后端。 ``'locmem'`` 后端将邮件报文保存到
 ``django.core.mail`` 模块的一个特定属性 ``outbox`` 中。发送第一封邮件时， ``outbox`` 属性就会被创建。
 该属性是一个列表，每个
 :class:`~django.core.mail.EmailMessage` 实例的邮件报文都会添加到该列表中。
