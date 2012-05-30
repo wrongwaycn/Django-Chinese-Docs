@@ -1,29 +1,26 @@
-======
-Models
-======
+============
+模型(Models)
+============
 
 .. module:: django.db.models
 
-A model is the single, definitive source of data about your data. It contains
-the essential fields and behaviors of the data you're storing. Generally, each
-model maps to a single database table.
+在Django应用当中，model 是唯一的数据来源。它包含必需的字段和用以保存数据的行为。通常情况下，一个 model 映射一个数据表。
 
-The basics:
+基础:
 
-* Each model is a Python class that subclasses
-  :class:`django.db.models.Model`.
+* 每个 model 都是一个继承自
+  :class:`django.db.models.Model` 类的子类
 
-* Each attribute of the model represents a database field.
+* model 的每个属性都表示数据库中的一个字段。
 
-* With all of this, Django gives you an automatically-generated
-  database-access API; see :doc:`/topics/db/queries`.
+* Django 会提供一套自动生成的用于数据库访问的API；详见
+  :doc:`/topics/db/queries`.
 
 
-Quick example
-=============
+入门例子
+========
 
-This example model defines a ``Person``, which has a ``first_name`` and
-``last_name``::
+这个例子定义了一个  ``Person`` model，它有 ``first_name`` 和 ``last_name`` 两个属性::
 
     from django.db import models
 
@@ -31,10 +28,9 @@ This example model defines a ``Person``, which has a ``first_name`` and
         first_name = models.CharField(max_length=30)
         last_name = models.CharField(max_length=30)
 
-``first_name`` and ``last_name`` are fields_ of the model. Each field is
-specified as a class attribute, and each attribute maps to a database column.
+``first_name`` 和 ``last_name`` 是model的 fields_ 。 每个字段都被指定成一个类属性，每个属性都映射一个数据库的列。
 
-The above ``Person`` model would create a database table like this:
+上面的 ``Person`` model 会在数据库中创建这样一张表::
 
 .. code-block:: sql
 
@@ -44,31 +40,24 @@ The above ``Person`` model would create a database table like this:
         "last_name" varchar(30) NOT NULL
     );
 
-Some technical notes:
+一些技术上的注意事项:
 
-* The name of the table, ``myapp_person``, is automatically derived from
-  some model metadata but can be overridden. See :ref:`table-names` for more
-  details..
+* 这个表的名称 ``myapp_person`` ，是根据 model 中的元数据自动生成的，也可以覆写为别的名称，详见
+  :ref:`table-names` 
 
-* An ``id`` field is added automatically, but this behavior can be
-  overridden. See :ref:`automatic-primary-key-fields`.
+* ``id`` 字段是自动添加的，但这个行为可以被重写。详见 :ref:`automatic-primary-key-fields` 。
 
-* The ``CREATE TABLE`` SQL in this example is formatted using PostgreSQL
-  syntax, but it's worth noting Django uses SQL tailored to the database
-  backend specified in your :doc:`settings file </topics/settings>`.
+* 这个例子使用 PostgreSQL 语法格式化 ``CREATE TABLE`` SQL 语句，要注意的是Django是根据
+   :doc:`settings file </topics/settings>` 配置中指定的数据库类型来生成相应的 SQL 语句。
 
-Using models
-============
+使用模型(models)
+================
 
-Once you have defined your models, you need to tell Django you're going to *use*
-those models. Do this by editing your settings file and changing the
-:setting:`INSTALLED_APPS` setting to add the name of the module that contains
-your ``models.py``.
+一旦你定义了 model ，就要通知 Django *启用* 这些 model ，你要做的就是：修改配置文件中的 :setting:`INSTALLED_APPS` 设置，
+在其中添加 ``models.py`` 所在应用的名称。
 
-For example, if the models for your application live in the module
-``mysite.myapp.models`` (the package structure that is created for an
-application by the :djadmin:`manage.py startapp <startapp>` script),
-:setting:`INSTALLED_APPS` should read, in part::
+例如，假设你的 model 定义在 ``mysite.myapp.models``  中 ( mysite 这个包是由 :djadmin:`manage.py startapp <startapp>` 脚本创建的)，
+那么 :setting:`INSTALLED_APPS` 就应该包含下面内容::
 
     INSTALLED_APPS = (
         #...
@@ -76,17 +65,16 @@ application by the :djadmin:`manage.py startapp <startapp>` script),
         #...
     )
 
-When you add new apps to :setting:`INSTALLED_APPS`, be sure to run
-:djadmin:`manage.py syncdb <syncdb>`.
+在  :setting:`INSTALLED_APPS` 中添加新应用(app)后，要运行 :djadmin:`manage.py syncdb <syncdb>` 同步数据库。
 
-Fields
-======
 
-The most important part of a model -- and the only required part of a model --
-is the list of database fields it defines. Fields are specified by class
-attributes.
+字段(Fields)
+============
 
-Example::
+model 中不可或缺且最为重要的，就是一系列的字段(fields)，它是一组数据库字段的列表。字段由类属性指定。
+
+
+例如::
 
     class Musician(models.Model):
         first_name = models.CharField(max_length=50)
@@ -99,61 +87,45 @@ Example::
         release_date = models.DateField()
         num_stars = models.IntegerField()
 
-Field types
------------
 
-Each field in your model should be an instance of the appropriate
-:class:`~django.db.models.Field` class. Django uses the field class types to
-determine a few things:
+字段类型(Field types)
+---------------------
 
-* The database column type (e.g. ``INTEGER``, ``VARCHAR``).
+model 中的每个字段都是 :class:`~django.db.models.Field`  子类的某个实例。Django 根据字段类的类型确定以下内容：
 
-* The :doc:`widget </ref/forms/widgets>` to use in Django's admin interface,
-  if you care to use it (e.g. ``<input type="text">``, ``<select>``).
+* 数据库当中的列类型 (比如 ``INTEGER``, ``VARCHAR``)。
 
-* The minimal validation requirements, used in Django's admin and in
-  automatically-generated forms.
+* Django 的用户管理界面所使用的部件( :doc:`widget </ref/forms/widgets>` )。当然，前提是你启用了 Django 的管理后台并使用了某些部件 (例如，``<input type="text">``, ``<select>`` ）。
 
-Django ships with dozens of built-in field types; you can find the complete list
-in the :ref:`model field reference <model-field-types>`. You can easily write
-your own fields if Django's built-in ones don't do the trick; see
-:doc:`/howto/custom-model-fields`.
+* 最低限度的验证需求。它被用在 Django 管理后台和自动生成的表单中。
 
-Field options
--------------
+Django 自带数十种内置的字段类型；详见 :ref:`model 字段参考 <model-field-types>` 
+如果内置类型仍不能满足你的要求，你可以自由地编写符合你要求的字段类型；详见 :doc:`/howto/custom-model-fields`.
 
-Each field takes a certain set of field-specific arguments (documented in the
-:ref:`model field reference <model-field-types>`). For example,
-:class:`~django.db.models.CharField` (and its subclasses) require a
-:attr:`~django.db.models.CharField.max_length` argument which specifies the size
-of the ``VARCHAR`` database field used to store the data.
 
-There's also a set of common arguments available to all field types. All are
-optional. They're fully explained in the :ref:`reference
-<common-model-field-options>`, but here's a quick summary of the most often-used
-ones:
+字段选项(Field options)
+-----------------------
+
+每个字段都有一些特有的参数，详见 :ref:`model 字段参数 <model-field-types>` 。
+例如， :class:`~django.db.models.CharField` (还有它的派生类) 都需要 :attr:`~django.db.models.CharField.max_length` 
+参数来指定存储数据的 ``VARCHAR`` 数据库字段的大小。
+
+还有一些适用于所有字段的通用的可选参数，这些参数在 :ref:`参考 <common-model-field-options>` 中有详细定义，这里我们只简单介绍一些最常用的：
 
 :attr:`~Field.null`
-    If ``True``, Django will store empty values as ``NULL`` in the database.
-    Default is ``False``.
+    如果为 ``True`` ， Django 在数据库中会将空值(empty)存储为 ``NULL`` 。默认为 ``False`` 。
 
 :attr:`~Field.blank`
-    If ``True``, the field is allowed to be blank. Default is ``False``.
+    如果为 ``True`` ，该字段允许不填(blank)。默认为 ``False`` 。
 
-    Note that this is different than :attr:`~Field.null`.
-    :attr:`~Field.null` is purely database-related, whereas
-    :attr:`~Field.blank` is validation-related. If a field has
-    :attr:`blank=True <Field.blank>`, validation on Django's admin site will
-    allow entry of an empty value. If a field has :attr:`blank=False
-    <Field.blank>`, the field will be required.
+    要注意，这与  :attr:`~Field.null` 不同。  :attr:`~Field.null` 纯粹是数据库范畴的，
+    而 :attr:`~Field.blank` 是数据验证范畴的。如果一个字段的 :attr:`blank=True <Field.blank>` ，
+    Django 的管理后台在做数据验证时，会允许该字段是空值。如果字段的  :attr:`blank=False <Field.blank>` ，该字段就是必填的。
 
 :attr:`~Field.choices`
-    An iterable (e.g., a list or tuple) of 2-tuples to use as choices for
-    this field. If this is given, Django's admin will use a select box
-    instead of the standard text field and will limit choices to the choices
-    given.
+    它是一个可迭代的二元组(例如，列表或是元组)，用来给字段提供选择项。如果设置了 choices ，Django 的管理后台就会显示选择框，而不是标准的文本框，而且这个选择框的选项就是 choices 中的元组。
 
-    A choices list looks like this::
+    这是一个关于 choices 列表的例子::
 
         YEAR_IN_SCHOOL_CHOICES = (
             (u'FR', u'Freshman'),
@@ -163,11 +135,8 @@ ones:
             (u'GR', u'Graduate'),
         )
 
-    The first element in each tuple is the value that will be stored in the
-    database, the second element will be displayed by the admin interface,
-    or in a ModelChoiceField. Given an instance of a model object, the
-    display value for a choices field can be accessed using the
-    ``get_FOO_display`` method. For example::
+    每个元组中的第一个元素，是存储在数据库中的值；第二个元素是在管理界面或 ModelChoiceField 中用作显示的内容。在一个给定的 model 类的实例中，想得到某个 choices 字段的显示值，就调用 ``get_FOO_display`` 方法(这里的 FOO 就是 choices 字段的名称 )。
+    例如::
 
         from django.db import models
 
@@ -189,42 +158,40 @@ ones:
         u'Male'
 
 :attr:`~Field.default`
-    The default value for the field. This can be a value or a callable
-    object. If callable it will be called every time a new object is
-    created.
+    字段的默认值。它可以是一个值，也可以是一个可调用的对象(这里称之为对象C)。若是后者，那么每次创建一个新对象时，对象C都将被调用。
 
 :attr:`~Field.help_text`
-    Extra "help" text to be displayed under the field on the object's admin
-    form. It's useful for documentation even if your object doesn't have an
-    admin form.
+    附加的帮助信息。在管理后台编辑该对象的表单中，它显示在字段下面。即使你的对象无须在后台进行管理，它对于文档化也是很有用的。
 
 :attr:`~Field.primary_key`
-    If ``True``, this field is the primary key for the model.
+    如果为 ``True`` ，那么这个字段就是 model 的主键。
 
-    If you don't specify :attr:`primary_key=True <Field.primary_key>` for
-    any fields in your model, Django will automatically add an
-    :class:`IntegerField` to hold the primary key, so you don't need to set
-    :attr:`primary_key=True <Field.primary_key>` on any of your fields
-    unless you want to override the default primary-key behavior. For more,
-    see :ref:`automatic-primary-key-fields`.
+    如果你没有指定任何一个字段的  :attr:`primary_key=True <Field.primary_key>` ，
+    Django 就会自动添加一个 :class:`IntegerField` 字段做为主键。所以除非你想重写默认的主键方法，
+    否则没必要在任何字段上设置 :attr:`primary_key=True <Field.primary_key>` 。详见  :ref:`automatic-primary-key-fields` 。
 
 :attr:`~Field.unique`
-    If ``True``, this field must be unique throughout the table.
+    如果为 ``True`` ，那么字段值就必须是全表唯一的。
 
-Again, these are just short descriptions of the most common field options. Full
-details can be found in the :ref:`common model field option reference
+再说一次，这些仅仅是常用字段的简短介绍，要了解详细内容，请查看
+:ref:`通用model字段选项参考 
 <common-model-field-options>`.
 
 .. _automatic-primary-key-fields:
 
-Automatic primary key fields
-----------------------------
+自增主键字段(Automatic primary key fields)
+------------------------------------------
 
-By default, Django gives each model the following field::
+默认情况下，Django 会给每个 model 添加下面这个字段::
 
     id = models.AutoField(primary_key=True)
 
-This is an auto-incrementing primary key.
+这是一个自增主键字段。
+
+如果你想指定一个自定义主键字段，只要在某个字段上指定 :attr:`primary_key=True <Field.primary_key>`  即可。
+如果 Django 看到你显式地设置了 Field.primary_key，就不会自动添加 id 列。
+
+每个 model 只要有一个字段指定 primary_key=True 就可以了。
 
 If you'd like to specify a custom primary key, just specify
 :attr:`primary_key=True <Field.primary_key>` on one of your fields. If Django

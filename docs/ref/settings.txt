@@ -8,116 +8,105 @@ Settings
 
 .. warning::
 
-    Be careful when you override settings, especially when the default value
-    is a non-empty tuple or dictionary, such as :setting:`MIDDLEWARE_CLASSES`
-    and :setting:`TEMPLATE_CONTEXT_PROCESSORS`. Make sure you keep the
-    components required by the features of Django you wish to use.
+    覆写设置项时，特别是在默认值为空元组()或是空字典{}的情况下，要格外谨慎。比如 :setting:`MIDDLEWARE_CLASSES`
+    和 :setting:`TEMPLATE_CONTEXT_PROCESSORS` 。要确保其包含你要用到的Django特性。
 
-Available settings
-==================
+有效的设置项
+============
 
-Here's a full list of all available settings, in alphabetical order, and their
-default values.
+接下来我们会按照字母顺序展示所有的可用设置项及其默认值。
 
 .. setting:: ABSOLUTE_URL_OVERRIDES
 
 ABSOLUTE_URL_OVERRIDES
 ----------------------
 
-Default: ``{}`` (Empty dictionary)
+默认值: ``{}`` (空字典)
 
-A dictionary mapping ``"app_label.model_name"`` strings to functions that take
-a model object and return its URL. This is a way of overriding
-``get_absolute_url()`` methods on a per-installation basis. Example::
+该设置项为一个字典，用于将 ``"app_label.model_name"`` 字符串与函式进行映射。函式接受一个model对象做为参数并返回该对象的网址。
+这相当于在其中的每个应用的底层上重载 ``get_absolute_url()`` 方法，例如::
 
     ABSOLUTE_URL_OVERRIDES = {
         'blogs.weblog': lambda o: "/blogs/%s/" % o.slug,
         'news.story': lambda o: "/stories/%s/%s/" % (o.pub_year, o.slug),
     }
 
-Note that the model name used in this setting should be all lower-case, regardless
-of the case of the actual model class name.
+注意用于该设置项的model字符串无论其实际名称是什么，在此处都应该设为小写。
 
 .. setting:: ADMIN_FOR
 
 ADMIN_FOR
 ---------
 
-Default: ``()`` (Empty tuple)
+默认项: ``()`` (空元组)
 
-Used for admin-site settings modules, this should be a tuple of settings
-modules (in the format ``'foo.bar.baz'``) for which this site is an admin.
+一个settings元组，用于存放django自带管理后台要用到的 settings 模块（格式如 ``'foo.bar.baz'`` ），
 
-The admin site uses this in its automatically-introspected documentation of
-models, views and template tags.
+自带的管理后台在对models,视图和模板标签的自动内省的文档中会用到该设置。
 
 .. setting:: ADMINS
 
 ADMINS
 ------
 
-Default: ``()`` (Empty tuple)
+默认值: ``()`` (空元组)
 
-A tuple that lists people who get code error notifications. When
-``DEBUG=False`` and a view raises an exception, Django will email these people
-with the full exception information. Each member of the tuple should be a tuple
-of (Full name, email address). Example::
+该元组内存放的是可以接收代码错误通知的用户。当
+``DEBUG=False`` 时，如果某个视图(view)抛出异常，Django就会将带有详细异常信息的以邮件的形式发送给上述用户。
+元组中的每个成员应该是一个形如(完整名称,邮件地址)的二元组，例如::
 
     (('John', 'john@example.com'), ('Mary', 'mary@example.com'))
 
-Note that Django will email *all* of these people whenever an error happens.
-See :doc:`/howto/error-reporting` for more information.
+要注意：无论何时，只要有错误发生，元组中的 *所有用户* 都会收到Django发送的邮件。
+wrongway特别提醒：有时这些错误会很多很烦，比如某些２B爬虫访问了某个不存的网址。
+详见 :doc:`/howto/error-reporting` 
 
 .. setting:: ALLOWED_INCLUDE_ROOTS
 
 ALLOWED_INCLUDE_ROOTS
 ---------------------
 
-Default: ``()`` (Empty tuple)
+默认值: ``()`` (空元组)
 
-A tuple of strings representing allowed prefixes for the ``{% ssi %}`` template
-tag. This is a security measure, so that template authors can't access files
-that they shouldn't be accessing.
+该元组内存放的是表示嵌入文件根路径的字符串——只有在某字符串存在于该元组的情况下，Django的 ``{% ssi %}`` 模板标签才会嵌入以其为前缀的文件。
+这样做是出于安全考虑，从而使模板作者不能访问到他们不该访问的文件。
 
-For example, if :setting:`ALLOWED_INCLUDE_ROOTS` is ``('/home/html', '/var/www')``,
-then ``{% ssi /home/html/foo.txt %}`` would work, but ``{% ssi /etc/passwd %}``
-wouldn't.
+举个例子，我们将 :setting:`ALLOWED_INCLUDE_ROOTS` 设为 ``('/home/html', '/var/www')`` ，
+那么 ``{% ssi /home/html/foo.txt %}`` 是有效的，而 ``{% ssi /etc/passwd %}``　则是无效的。
 
 .. setting:: APPEND_SLASH
 
 APPEND_SLASH
 ------------
 
-Default: ``True``
+默认值: ``True``
 
-When set to ``True``, if the request URL does not match any of the patterns
-in the URLconf and it doesn't end in a slash, an HTTP redirect is issued to the
-same URL with a slash appended. Note that the redirect may cause any data
-submitted in a POST request to be lost.
+设为 ``True`` 时，如果请求的URL与URLconf中的任何一个URL模式都不匹配，且URL并没有以斜杠结尾，那么Django就会重定向到以斜杠结尾的相同网址。
+要注意的是，重定向可能会导致某些POST请求所提交的数据丢失。
 
-The :setting:`APPEND_SLASH` setting is only used if
-:class:`~django.middleware.common.CommonMiddleware` is installed
-(see :doc:`/topics/http/middleware`). See also :setting:`PREPEND_WWW`.
+:setting:`APPEND_SLASH` 设置项只有在安装了
+:class:`~django.middleware.common.CommonMiddleware` 的情况下才会生效。
+(详见 :doc:`/topics/http/middleware`)。 也可参见 :setting:`PREPEND_WWW` 。
 
 .. setting:: AUTHENTICATION_BACKENDS
 
 AUTHENTICATION_BACKENDS
 -----------------------
 
-Default: ``('django.contrib.auth.backends.ModelBackend',)``
+默认值: ``('django.contrib.auth.backends.ModelBackend',)``
 
-A tuple of authentication backend classes (as strings) to use when attempting to
-authenticate a user. See the :doc:`authentication backends documentation
-</ref/authbackends>` for details.
+是一个存放用户认址后端类(authentication backend class)的元组，用于于认证用户详见
+:doc:`用户认证后端文档
+</ref/authbackends>` 。
 
 .. setting:: AUTH_PROFILE_MODULE
 
 AUTH_PROFILE_MODULE
 -------------------
 
-Default: Not defined
+默认值: 未定义
 
-The site-specific user profile model used by this site. See
+当前站点使用的用户附加属性模型。详面
 :ref:`auth-profiles`.
 
 .. setting:: CACHES
@@ -127,7 +116,7 @@ CACHES
 
 .. versionadded:: 1.3
 
-Default::
+默认值::
 
     {
         'default': {
@@ -135,24 +124,21 @@ Default::
         }
     }
 
-A dictionary containing the settings for all caches to be used with
-Django. It is a nested dictionary whose contents maps cache aliases
-to a dictionary containing the options for an individual cache.
+该设置项包含了Django会用到的所有缓存设置。这是一个嵌套的字典，其中的每个键名（即缓存项别名）都对应一个存放缓存选项的字典。
 
-The :setting:`CACHES` setting must configure a ``default`` cache;
-any number of additional caches may also be specified. If you
-are using a cache backend other than the local memory cache, or
-you need to define multiple caches, other options will be required.
-The following cache options are available.
+
+:setting:`CACHES` 字典中必须包含一个 ``default`` 缓存；其他缓存可以随意命名。
+如果你正在使用缓存的并非是本地内存缓存，或者你想定义多个缓存，就要用到其他选项。
+以下就是可用的缓存选项：
 
 .. setting:: CACHES-BACKEND
 
 BACKEND
 ~~~~~~~
 
-Default: ``''`` (Empty string)
+默认值: ``''`` (空字符串)
 
-The cache backend to use. The built-in cache backends are:
+要使用的缓存后端。内置的缓存后端有以下几种：
 
 * ``'django.core.cache.backends.db.DatabaseCache'``
 * ``'django.core.cache.backends.dummy.DummyCache'``
@@ -161,57 +147,47 @@ The cache backend to use. The built-in cache backends are:
 * ``'django.core.cache.backends.memcached.MemcachedCache'``
 * ``'django.core.cache.backends.memcached.PyLibMCCache'``
 
-You can use a cache backend that doesn't ship with Django by setting
-:setting:`BACKEND <CACHE-BACKEND>` to a fully-qualified path of a cache
-backend class (i.e. ``mypackage.backends.whatever.WhateverCache``).
-Writing a whole new cache backend from scratch is left as an exercise
-to the reader; see the other backends for examples.
+我们可以将:setting:`BACKEND <CACHE-BACKEND>` 设为某个缓存后端的可访问路径(例如 ``mypackage.backends.whatever.WhateverCache``)，以使用非Django内置的第三方缓存。
+您不妨参考其他后端，从头编写一个完整的新缓存后端，以此做为一个读者练习。
 
 .. note::
-    Prior to Django 1.3, you could use a URI based version of the backend
-    name to reference the built-in cache backends (e.g., you could use
-    ``'db://tablename'`` to refer to the database backend). This format has
-    been deprecated, and will be removed in Django 1.5.
+    在Django1.3之前，我们使用以后端类型名为前缀的URI来表示Django内置的缓存后端(比如，使用``'db://tablename'`` 表示使用数据库缓存后端)。
+    我们不建议使用这种格式，它会在Django1.5中彻底去除。
 
 .. setting:: CACHES-KEY_FUNCTION
 
 KEY_FUNCTION
 ~~~~~~~~~~~~
 
-A string containing a dotted path to a function that defines how to
-compose a prefix, version and key into a final cache key. The default
-implementation is equivalent to the function::
+一个以'.'做为路径间隔的字符串，表示一个函式的可访问路径。该函式决定了如何将前缀，版本以及键名拼装成最终的缓存键。
+默认的实现方法如下::
 
     def make_key(key, key_prefix, version):
         return ':'.join([key_prefix, str(version), smart_str(key)])
 
-You may use any key function you want, as long as it has the same
-argument signature.
+如果你想使用自定义的函式，新函式只需与上述参数相同即可。
 
-See the :ref:`cache documentation <cache_key_transformation>` for more information.
+详见 :ref:`缓存文档 <cache_key_transformation>` 。
 
 .. setting:: CACHES-KEY_PREFIX
 
 KEY_PREFIX
 ~~~~~~~~~~
 
-Default: ``''`` (Empty string)
+默认值: ``''`` (空字符串)
 
-A string that will be automatically included (prepended by default) to
-all cache keys used by the Django server.
+做为前缀自动被Django包含在所有缓存键名中。
 
-See the :ref:`cache documentation <cache_key_prefixing>` for more information.
+详见 :ref:`缓存文档 <cache_key_prefixing>` 。
 
 .. setting:: CACHES-LOCATION
 
 LOCATION
 ~~~~~~~~
 
-Default: ``''`` (Empty string)
+默认值: ``''`` (空字符串)
 
-The location of the cache to use. This might be the directory for a
-file system cache, a host and port for a memcache server, or simply an
-identifying name for a local memory cache. e.g.::
+要使用的缓存位置。它可以是文件系统缓存的一个目录，也可以是memcache服务器的主机和端口，或是仅仅是本地内存缓存的一个简单标识名称::
 
     CACHES = {
         'default': {
@@ -225,82 +201,76 @@ identifying name for a local memory cache. e.g.::
 OPTIONS
 ~~~~~~~
 
-Default: None
+默认值: None
 
-Extra parameters to pass to the cache backend. Available parameters
-vary depending on your cache backend.
+传递给缓存后端的其他选项。根据所使用的缓存后端不同，使用不同的参数。
 
-Some information on available parameters can be found in the
-:doc:`Cache Backends </topics/cache>` documentation. For more information,
-consult your backend module's own documentation.
+具体的参数列表详见
+:doc:`缓存后端 </topics/cache>` ，以了解您所选用的后端使用哪些参数。
 
 .. setting:: CACHES-TIMEOUT
 
 TIMEOUT
 ~~~~~~~
 
-Default: 300
+默认值: 300
 
-The number of seconds before a cache entry is considered stale.
+设置缓存项的过期时间，以秒为单位。
 
 .. setting:: CACHES-VERSION
 
 VERSION
 ~~~~~~~
 
-Default: ``1``
+默认值: ``1``
 
-The default version number for cache keys generated by the Django server.
+由Django生成的用于组合缓存键名的默认版本数字。
 
-See the :ref:`cache documentation <cache_versioning>` for more information.
+详见 :ref:`cache documentation <cache_versioning>` 。
 
 .. setting:: CACHE_MIDDLEWARE_ALIAS
 
 CACHE_MIDDLEWARE_ALIAS
 ----------------------
 
-Default: ``default``
+默认值: ``default``
 
-The cache connection to use for the cache middleware.
+用于缓存中间件的缓存链接。
 
 .. setting:: CACHE_MIDDLEWARE_ANONYMOUS_ONLY
 
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY
 -------------------------------
 
-Default: ``False``
+默认值: ``False``
 
-If the value of this setting is ``True``, only anonymous requests (i.e., not
-those made by a logged-in user) will be cached.  Otherwise, the middleware
-caches every page that doesn't have GET or POST parameters.
+如果为 ``True`` ，只有匿名请求(例如非登录用户的请求)才会被缓存。否则，缓存中间件会缓存每一张没有GET和POST传入参数的网页。
 
-If you set the value of this setting to ``True``, you should make sure you've
-activated ``AuthenticationMiddleware``.
+将该设置设为 ``True`` 时，要在middleware中添加 ``AuthenticationMiddleware`` 。
 
-See :doc:`/topics/cache`.
+详见 :doc:`/topics/cache`.
 
 .. setting:: CACHE_MIDDLEWARE_KEY_PREFIX
 
 CACHE_MIDDLEWARE_KEY_PREFIX
 ---------------------------
 
-Default: ``''`` (Empty string)
+默认值: ``''`` (空字符串)
 
-The cache key prefix that the cache middleware should use.
+缓存中间件要用到的缓存前缀。
 
-See :doc:`/topics/cache`.
+详见 :doc:`/topics/cache`.
 
 .. setting:: CACHE_MIDDLEWARE_SECONDS
 
 CACHE_MIDDLEWARE_SECONDS
 ------------------------
 
-Default: ``600``
+默认值: ``600``
 
-The default number of seconds to cache a page when the caching middleware or
-``cache_page()`` decorator is used.
+使用缓存中间件或是 ``cache_page()`` 装饰器时缓存一个页面的过期时间，单位是秒。
 
-See :doc:`/topics/cache`.
+详见 :doc:`/topics/cache` 。
 
 .. setting:: CSRF_COOKIE_DOMAIN
 
@@ -309,17 +279,13 @@ CSRF_COOKIE_DOMAIN
 
 .. versionadded:: 1.2
 
-Default: ``None``
+默认值: ``None``
 
-The domain to be used when setting the CSRF cookie.  This can be useful for
-easily allowing cross-subdomain requests to be excluded from the normal cross
-site request forgery protection.  It should be set to a string such as
-``".lawrence.com"`` to allow a POST request from a form on one subdomain to be
-accepted by accepted by a view served from another subdomain.
+设置启用CSRF cookie的站点。它可以轻易地将跨站请求伪造与正常的跨子站请求区分开。
+该设置项的格式应该类似 ``".lawrence.com"`` ，以允许由一个子站表单发出的POST请求可以被另一个子站的视图(view)所接收。
 
-Please note that the presence of this setting does not imply that Django's CSRF
-protection is safe from cross-subdomain attacks by default - please see the
-:ref:`CSRF limitations <csrf-limitations>` section.
+请注意该设置项的存在并不意味着：在默认情况下，Django的CSRF防护对于跨子站攻击就是安全的。详见
+:ref:`CSRF 限制 <csrf-limitations>` 一节。
 
 .. setting:: CSRF_COOKIE_NAME
 
@@ -328,10 +294,10 @@ CSRF_COOKIE_NAME
 
 .. versionadded:: 1.2
 
-Default: ``'csrftoken'``
+默认值: ``'csrftoken'``
 
-The name of the cookie to use for the CSRF authentication token. This can be whatever you
-want.  See :doc:`/ref/contrib/csrf`.
+用于CSRF认证令牌的cookie名称。可以是任何名称，详见
+:doc:`/ref/contrib/csrf`.
 
 .. setting:: CSRF_COOKIE_PATH
 
@@ -340,14 +306,11 @@ CSRF_COOKIE_PATH
 
 .. versionadded:: 1.4
 
-Default: ``'/'``
+默认值: ``'/'``
 
-The path set on the CSRF cookie. This should either match the URL path of your
-Django installation or be a parent of that path.
+应用于CSRF cookie的路径。它应该匹配你的Django应用的URL路径，或是该路径的父路径。
 
-This is useful if you have multiple Django instances running under the same
-hostname. They can use different cookie paths, and each instance will only see
-its own CSRF cookie.
+如果你在同一台主机上运行多个Django实例时，该设定会非常有用。它们各自使用不同的cookie路径，每个实例只能看到自己的CSRF cookie。
 
 .. setting:: CSRF_COOKIE_SECURE
 
@@ -356,7 +319,7 @@ CSRF_COOKIE_SECURE
 
 .. versionadded:: 1.4
 
-Default: ``False``
+默认值: ``False``
 
 Whether to use a secure cookie for the CSRF cookie. If this is set to ``True``,
 the cookie will be marked as "secure," which means browsers may ensure that the
@@ -369,7 +332,7 @@ CSRF_FAILURE_VIEW
 
 .. versionadded:: 1.2
 
-Default: ``'django.views.csrf.csrf_failure'``
+默认值: ``'django.views.csrf.csrf_failure'``
 
 A dotted path to the view function to be used when an incoming request
 is rejected by the CSRF protection.  The function should have this signature::

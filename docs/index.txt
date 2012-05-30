@@ -178,7 +178,7 @@ Other batteries included
 * :doc:`Flatpages <ref/contrib/flatpages>`
 * :doc:`GeoDjango <ref/contrib/gis/index>`
 * :doc:`Humanize <ref/contrib/humanize>`
-* :doc:`Internationalization <topics/i18n/index>`
+* :doc:`Internationalization / 国际化 <topics/i18n/index>`
 * :doc:`Jython support <howto/jython>`
 * :doc:`"Local flavor" <ref/contrib/localflavor>`
 * :doc:`Logging <topics/logging>`
