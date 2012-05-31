@@ -455,7 +455,7 @@ USER
 
 默认值： ``''`` (Empty string)
 
-The username to use when connecting to the database. Not used with SQLite.
+连接数据库时使用的用户名。使用SQLite时此项无效。
 
 .. setting:: TEST_CHARSET
 
@@ -464,12 +464,9 @@ TEST_CHARSET
 
 默认值： ``None``
 
-The character set encoding used to create the test database. The value of this
-string is passed directly through to the database, so its format is
-backend-specific.
+创建测试数据库时使用的字符集编码方案。因为该值是直接传给数据库的，所以它的格式是由数据库后端指定的。
 
-Supported for the PostgreSQL_ (``postgresql_psycopg2``) and MySQL_ (``mysql``)
-backends.
+该设置项对 PostgreSQL_ (``postgresql_psycopg2``) 和 MySQL_ (``mysql``) 后端有效。
 
 .. _PostgreSQL: http://www.postgresql.org/docs/8.2/static/multibyte.html
 .. _MySQL: http://dev.mysql.com/doc/refman/5.0/en/charset-database.html
@@ -481,10 +478,9 @@ TEST_COLLATION
 
 默认值： ``None``
 
-The collation order to use when creating the test database. This value is
-passed directly to the backend, so its format is backend-specific.
+创建测试数据库时使用的排序顺利。因为该值是直接传给后端的，所以它的格式由数据库后端所决定。
 
-Only supported for the ``mysql`` backend (see the `MySQL manual`_ for details).
+仅仅支持 ``mysql`` 后端 (详见 `MySQL manual`_ )。
 
 .. _MySQL manual: MySQL_
 
@@ -495,12 +491,11 @@ TEST_DEPENDENCIES
 
 .. versionadded:: 1.3
 
-默认值： ``['default']``, for all databases other than ``default``,
-which has no dependencies.
+默认值： 对其他非 ``default`` 且没有依赖关联的数据库而言，默认值就是 ``['default']`` 。
 
-The creation-order dependencies of the database. See the documentation
-on :ref:`controlling the creation order of test databases
-<topics-testing-creation-dependencies>` for details.
+数据库依赖关联的创建顺序。详见文档
+:ref:`控制测试数据库的创建顺序
+<topics-testing-creation-dependencies>` 。
 
 .. setting:: TEST_MIRROR
 
@@ -509,13 +504,12 @@ TEST_MIRROR
 
 默认值： ``None``
 
-The alias of the database that this database should mirror during
-testing.
+测试时的镜像数据库别名。
 
-This setting exists to allow for testing of master/slave
-configurations of multiple databases. See the documentation on
-:ref:`testing master/slave configurations
-<topics-testing-masterslave>` for details.
+该项适用于测试多个数据库的主/从配置。
+详见
+:ref:`测试主从配置
+<topics-testing-masterslave>` 。
 
 .. setting:: TEST_NAME
 
@@ -524,13 +518,12 @@ TEST_NAME
 
 默认值： ``None``
 
-The name of database to use when running the test suite.
+运行测试案例时使用的数据库的名称。
 
-If the default value (``None``) is used with the SQLite database engine, the
-tests will use a memory resident database. For all other database engines the
-test database will use the name ``'test_' + DATABASE_NAME``.
+使用SQLite数据库时，如果使用默认值 (``None``) ，测试时就会使用一个驻留内存的数据库。
+对于其他数据库引擎来说，测试时的数据库名称就是 ``'test_' + DATABASE_NAME`` 。
 
-See :doc:`/topics/testing`.
+详见 :doc:`/topics/testing`.
 
 .. setting:: TEST_CREATE
 
@@ -539,10 +532,9 @@ TEST_CREATE
 
 默认值： ``True``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-If it is set to ``False``, the test tablespaces won't be automatically created
-at the beginning of the tests and dropped at the end.
+如果设为 ``False`` ，就不会在测试起始和结束时自动创建和删除测试表空间。
 
 .. setting:: TEST_USER
 
@@ -551,10 +543,9 @@ TEST_USER
 
 默认值： ``None``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-The username to use when connecting to the Oracle database that will be used
-when running tests. If not provided, Django will use ``'test_' + USER``.
+运行测试时连接Oracle数据库所使用的用户名。如果为空，Django会使用 ``'test_' + USER`` 做为默认用户名。
 
 .. setting:: TEST_USER_CREATE
 
@@ -563,10 +554,9 @@ TEST_USER_CREATE
 
 默认值： ``True``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-If it is set to ``False``, the test user won't be automatically created at the
-beginning of the tests and dropped at the end.
+如果设为 ``False`` ，就不在会测试起始和结束时自动创建和删除测试用户。
 
 .. setting:: TEST_PASSWD
 
@@ -575,10 +565,9 @@ TEST_PASSWD
 
 默认值： ``None``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-The password to use when connecting to the Oracle database that will be used
-when running tests. If not provided, Django will use a hardcoded default value.
+运行测试时连接Oracle数据库所使用的密码。如果为空，Django会使用一个硬编码的默认值。
 
 .. setting:: TEST_TBLSPACE
 
@@ -587,10 +576,9 @@ TEST_TBLSPACE
 
 默认值： ``None``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-The name of the tablespace that will be used when running tests. If not
-provided, Django will use ``'test_' + NAME``.
+运行测试时使用的表空间的名称。如果为空，Django会使用 ``'test_' + NAME`` 做为表空间名。
 
 .. setting:: TEST_TBLSPACE_TMP
 
@@ -599,10 +587,9 @@ TEST_TBLSPACE_TMP
 
 默认值： ``None``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-The name of the temporary tablespace that will be used when running tests. If
-not provided, Django will use ``'test_' + NAME + '_temp'``.
+运行测试时使用的临时表空间的名称。如果为空，Django会使用 ``'test_' + NAME + '_temp'`` 做为临时表空间的名称。
 
 .. setting:: DATABASE_ROUTERS
 
