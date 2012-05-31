@@ -40,8 +40,9 @@ Model ``Meta`` 选项
 
 .. _table-names:
 
-Table names
-~~~~~~~~~~~
+
+数据库中的表名称
+~~~~~~~~~~~~~~~~
 
 为了节省时间, Django 会自动的使用你的 model class 的名称和包含这个 model 的 app 名称来构建
 数据库的表名称. 一个 model 的数据库表名称是通过将 "app label" -- 你在 :djadmin:`manage.py 
@@ -52,10 +53,10 @@ startapp <startapp>` 中使用的名称 -- 和 model 的类名称， 加上一�
 
 如果想自定义数据库的表名称, 需要在 ``class Meta`` 使用 ``db_table`` 参数来自定义.
 
-如果你的数据库表名称是一个SQL保留字, 或者它包含不允许出现在 Python 变量中的字符 -- 比如, 连字
-符 -- 这是没问题的. 这是因为 Django 会自动给列名和表名添加引号.
+如果你的数据库表名称是一个SQL保留字, 或者它包含不允许出现在 Python 变量中的字符 (比如连字
+符) 这是没问题的. 这是因为 Django 会自动给列名和表名添加引号.
 
-.. admonition:: 在 MySQL 中需要使用小写字母数据库表名称
+.. admonition:: 在 MySQL 中使用小写字母作为数据库表名称
 
     强烈建议你在通过 ``db_table`` 重载数据库表名称时, 使用小写字母, 特别是当你在使用 MySQL
     作为后台数据库时. 查看 :ref:`MySQL notes <mysql-notes>` 了解更多细节.
