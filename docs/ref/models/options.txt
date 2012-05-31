@@ -1,13 +1,13 @@
-======================
-Model ``Meta`` options
-======================
+===================
+Model ``Meta`` 选项
+===================
 
-This document explains all the possible :ref:`metadata options
-<meta-options>` that you can give your model in its internal
-``class Meta``.
+本文介绍你能在model中使用的 ``class Meta`` 内嵌类的所有
+:ref:`元数据选项 (meta options) <meta-options>`
 
-Available ``Meta`` options
-==========================
+
+``Meta`` 可用选项 (Available ``Meta`` options)
+==============================================
 
 .. currentmodule:: django.db.models
 
@@ -16,17 +16,16 @@ Available ``Meta`` options
 
 .. attribute:: Options.abstract
 
-    If ``abstract = True``, this model will be an
-    :ref:`abstract base class <abstract-base-classes>`.
+    如果 ``abstract = True``, 这个 model 就是一个
+    :ref:`抽象基类 <abstract-base-classes>`.
 
 ``app_label``
 -------------
 
 .. attribute:: Options.app_label
 
-    If a model exists outside of the standard :file:`models.py` (for instance,
-    if the app's models are in submodules of ``myapp.models``), the model must
-    define which app it is part of::
+    如果一个 model 定义在默认的 :file:`models.py` 之外 (例如, 如果你的 app 的 models 在
+    ``myapp.models`` 子模块下), 你必须定义 app_label 让 Django 知道它属于哪一个 app ::
 
         app_label = 'myapp'
 
@@ -35,7 +34,7 @@ Available ``Meta`` options
 
 .. attribute:: Options.db_table
 
-    The name of the database table to use for the model::
+    定义该 model 在数据中的表名称::
 
         db_table = 'music_album'
 
@@ -44,29 +43,22 @@ Available ``Meta`` options
 Table names
 ~~~~~~~~~~~
 
-To save you time, Django automatically derives the name of the database table
-from the name of your model class and the app that contains it. A model's
-database table name is constructed by joining the model's "app label" -- the
-name you used in :djadmin:`manage.py startapp <startapp>` -- to the model's
-class name, with an underscore between them.
+为了节省时间, Django 会自动的使用你的 model class 的名称和包含这个 model 的 app 名称来构建
+数据库的表名称. 一个 model 的数据库表名称是通过将 "app label" -- 你在 :djadmin:`manage.py 
+startapp <startapp>` 中使用的名称 -- 和 model 的类名称， 加上一个下划线在他们之间来构成.
 
-For example, if you have an app ``bookstore`` (as created by
-``manage.py startapp bookstore``), a model defined as ``class Book`` will have
-a database table named ``bookstore_book``.
+例如, 如果你有一个 app ``bookstore`` (使用 ``manage.py startapp bookstore`` 创建), 以及
+一个 model 定义为 ``class Book`` 这样将创建一个名为 ``bookstore_book`` 的数据库表.
 
-To override the database table name, use the ``db_table`` parameter in
-``class Meta``.
+如果想自定义数据库的表名称, 需要在 ``class Meta`` 使用 ``db_table`` 参数来自定义.
 
-If your database table name is an SQL reserved word, or contains characters that
-aren't allowed in Python variable names -- notably, the hyphen -- that's OK.
-Django quotes column and table names behind the scenes.
+如果你的数据库表名称是一个SQL保留字, 或者它包含不允许出现在 Python 变量中的字符 -- 比如, 连字
+符 -- 这是没问题的. 这是因为 Django 会自动给列名和表名添加引号.
 
-.. admonition:: Use lowercase table names for MySQL
+.. admonition:: 在 MySQL 中需要使用小写字母数据库表名称
 
-    It is strongly advised that you use lowercase table names when you override
-    the table name via ``db_table``, particularly if you are using the MySQL
-    backend. See the :ref:`MySQL notes <mysql-notes>` for more details.
-
+    强烈建议你在通过 ``db_table`` 重载数据库表名称时, 使用小写字母, 特别是当你在使用 MySQL
+    作为后台数据库时. 查看 :ref:`MySQL notes <mysql-notes>` 了解更多细节.
 
 ``db_tablespace``
 -----------------
