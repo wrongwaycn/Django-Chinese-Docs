@@ -2,8 +2,8 @@
 Model ``Meta`` 选项
 ===================
 
-本文介绍你能在model中使用的 ``class Meta`` 内嵌类的所有
-:ref:`元数据选项 (meta options) <meta-options>`
+本文介绍你能在model中使用的 ``class Meta`` 内嵌类的所有 :ref:`元数据选项 (meta options)
+<meta-options>`
 
 
 ``Meta`` 可用选项 (Available ``Meta`` options)
@@ -16,8 +16,7 @@ Model ``Meta`` 选项
 
 .. attribute:: Options.abstract
 
-    如果 ``abstract = True``, 这个 model 就是一个
-    :ref:`抽象基类 <abstract-base-classes>`.
+    如果 ``abstract = True``, 这个 model 就是一个 :ref:`抽象基类 <abstract-base-classes>`.
 
 ``app_label``
 -------------
@@ -45,16 +44,16 @@ Model ``Meta`` 选项
 ~~~~~~~~~~~~~~~~
 
 为了节省时间, Django 会自动的使用你的 model class 的名称和包含这个 model 的 app 名称来构建
-数据库的表名称. 一个 model 的数据库表名称是通过将 "app label" -- 你在 :djadmin:`manage.py 
+数据库的表名称. 一个 model 的数据库表名称是通过将 "app label" -- 你在 :djadmin:`manage.py
 startapp <startapp>` 中使用的名称 -- 和 model 的类名称， 加上一个下划线在他们之间来构成.
 
-例如, 如果你有一个 app ``bookstore`` (使用 ``manage.py startapp bookstore`` 创建), 以及
-一个 model 定义为 ``class Book`` 这样将创建一个名为 ``bookstore_book`` 的数据库表.
+例如, 如果你有一个 app ``bookstore`` (使用 ``manage.py startapp bookstore`` 创建), 以及一个
+model 定义为 ``class Book`` 这样将创建一个名为 ``bookstore_book`` 的数据库表.
 
 如果想自定义数据库的表名称, 需要在 ``class Meta`` 使用 ``db_table`` 参数来自定义.
 
-如果你的数据库表名称是一个SQL保留字, 或者它包含不允许出现在 Python 变量中的字符 (比如连字
-符) 这是没问题的. 这是因为 Django 会自动给列名和表名添加引号.
+如果你的数据库表名称是一个SQL保留字, 或者它包含不允许出现在 Python 变量中的字符 (比如连字符)
+这是没问题的. 这是因为 Django 会自动给列名和表名添加引号.
 
 .. admonition:: 在 MySQL 中使用小写字母作为数据库表名称
 
@@ -66,24 +65,23 @@ startapp <startapp>` 中使用的名称 -- 和 model 的类名称， 加上一�
 
 .. attribute:: Options.db_tablespace
 
-    定义这个 model 所使用的 :doc:`数据库 表空间 </topics/db/tablespaces>`. 如果在项
-    目的 setting 中定义了 :setting:`DEFAULT_TABLESPACE` 那么它会使用这个值.
-    如果后台数据库不支持表空间, 这个选项会被忽略.
+    定义这个 model 所使用的 :doc:`数据库 表空间 </topics/db/tablespaces>`. 如果在项目的
+    setting 中定义了 :setting:`DEFAULT_TABLESPACE` 那么它会使用这个值. 如果后台数据库不支持
+    表空间, 这个选项会被忽略.
 
 ``get_latest_by``
 -----------------
 
 .. attribute:: Options.get_latest_by
 
-    The name of a :class:`DateField` or :class:`DateTimeField` in the model.
-    This specifies the default field to use in your model :class:`Manager`'s
-    :class:`~QuerySet.latest` method.
+    在 model 中指定一个 :class:`DateField` 或者 :class:`DateTimeField` . 这个设置让你在使用
+    model 的 :class:`Manager` 上的 :class:`~QuerySet.latest` 方法时, 默认使用指定字段来排序.
 
-    Example::
+    例如::
 
         get_latest_by = "order_date"
 
-    See the docs for :meth:`~django.db.models.query.QuerySet.latest` for more.
+    详见 :meth:`~django.db.models.query.QuerySet.latest` .
 
 ``managed``
 -----------
