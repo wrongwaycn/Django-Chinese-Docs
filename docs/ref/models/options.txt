@@ -88,39 +88,33 @@ model 定义为 ``class Book`` 这样将创建一个名为 ``bookstore_book`` �
 
 .. attribute:: Options.managed
 
-    Defaults to ``True``, meaning Django will create the appropriate database
-    tables in :djadmin:`syncdb` and remove them as part of a :djadmin:`reset`
-    management command. That is, Django *manages* the database tables'
-    lifecycles.
+    默认值为 ``True``, 这意味着 Django 可以使用 :djadmin:`syncdb` 和 :djadmin:`reset` 命令
+    来创建或移除对应的数据库. 换句话说, Django *管理* 了数据库的生命周期.
 
-    If ``False``, no database table creation or deletion operations will be
-    performed for this model. This is useful if the model represents an existing
-    table or a database view that has been created by some other means. This is
-    the *only* difference when ``managed=False``. All other aspects of
-    model handling are exactly the same as normal. This includes
+    如果设置为 ``False``, Django 将不会为当前 model 创建或者删除数据库表. 通常在表示某个通
+    过其他方法创建的现有数据表时这会非常有用. 这是当 ``managed=False`` 时 *仅有* 的不同之处.
+    model 在处理所有其他方面的事情时是完全一致的. 这包括
 
-    1. Adding an automatic primary key field to the model if you don't
-       declare it.  To avoid confusion for later code readers, it's
-       recommended to specify all the columns from the database table you
-       are modeling when using unmanaged models.
+    1. 如果没有声明主键字段, Django 将自动的为 model 增加一个自增的主键字段. 当你使用不被
+       *管理* 的 models 时, 为了避免让将来阅读代码的人迷惑, 建议指明所有所有托管在 model 中的
+       字段与数据库表的关系.
 
-    2. If a model with ``managed=False`` contains a
-       :class:`~django.db.models.ManyToManyField` that points to another
-       unmanaged model, then the intermediate table for the many-to-many
-       join will also not be created. However, the intermediary table
-       between one managed and one unmanaged model *will* be created.
+    2. 如果两个非托管的 models (``managed=False``) 之间, 使用了
+       :class:`~django.db.models.ManyToManyField` 关联, 就不会创建多对多关系的中间表. 然而如果
+       是一个托管的 model 与另一个非托管的 model 的话, 多对多关系 *将会* 被创建.
 
-       If you need to change this default behavior, create the intermediary
-       table as an explicit model (with ``managed`` set as needed) and use
-       the :attr:`ManyToManyField.through` attribute to make the relation
-       use your custom model.
+       如果你需要改变默认的行为, 就的显示的定义中间 model 来在数据库中创建中间表(要将
+       ``managed`` 设置为 ``True``), 然后在你的原 model 上使用
+       :attr:`ManyToManyField.through` 属性指向中间 model, 就能实现自定义的多对多关系.
 
-    For tests involving models with ``managed=False``, it's up to you to ensure
-    the correct tables are created as part of the test setup.
 
-    If you're interested in changing the Python-level behavior of a model class,
-    you *could* use ``managed=False`` and create a copy of an existing model.
-    However, there's a better approach for that situation: :ref:`proxy-models`.
+    如果你的测试中包含非托管 model (``managed=False``), 那么在测试之前, 你应该要确保在测试
+    创建时已经创建了正确的数据表.
+
+    如果你想更改 model 类中某个 Python 层级的行为, 你 *可以* 令 ``managed=False``, 然后创建
+    该 model 的拷贝, 在拷贝中定义新的行为. 不过在面对这种情况时还有个更好的办法就是使用
+    :ref:`proxy-models`.
+
 
 ``order_with_respect_to``
 -------------------------
