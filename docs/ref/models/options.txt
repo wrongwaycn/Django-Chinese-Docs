@@ -66,10 +66,9 @@ startapp <startapp>` 中使用的名称 -- 和 model 的类名称， 加上一�
 
 .. attribute:: Options.db_tablespace
 
-    The name of the :doc:`database tablespace </topics/db/tablespaces>` to use
-    for this model. The default is the project's :setting:`DEFAULT_TABLESPACE`
-    setting, if set. If the backend doesn't support tablespaces, this option is
-    ignored.
+    定义这个 model 所使用的 :doc:`数据库 表空间 </topics/db/tablespaces>`. 如果在项
+    目的 setting 中定义了 :setting:`DEFAULT_TABLESPACE` 那么它会使用这个值.
+    如果后台数据库不支持表空间, 这个选项会被忽略.
 
 ``get_latest_by``
 -----------------
