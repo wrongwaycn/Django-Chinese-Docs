@@ -598,13 +598,13 @@ DATABASE_ROUTERS
 
 .. versionadded:: 1.2
 
-默认值： ``[]`` (Empty list)
+默认值： ``[]`` (空列表)
 
-The list of routers that will be used to determine which database
-to use when performing a database queries.
+该路由列表决定了执行一个数据库查询时使用哪个数据库。
 
-See the documentation on :ref:`automatic database routing in multi
-database configurations <topics-db-multi-db-routing>`.
+详见
+:ref:`使用多数据库配置时自切切换数据库路由
+<topics-db-multi-db-routing>` 。
 
 .. setting:: DATE_FORMAT
 
@@ -613,15 +613,15 @@ DATE_FORMAT
 
 默认值： ``'N j, Y'`` (e.g. ``Feb. 4, 2003``)
 
-The default formatting to use for displaying date fields in any part of the
-system. Note that if :setting:`USE_L10N` is set to ``True``, then the
-locale-dictated format has higher precedence and will be applied instead. See
-:tfilter:`allowed date format strings <date>`.
+显示日期字段时所使用的默认格式，与系统无关。要注意当 :setting:`USE_L10N` 被设为 ``True`` 时，
+本地语言环境所指定的格式拥有更高的优先级并取代该设置项。详见
+:tfilter:`日期格式字符串 <date>` 。
 
 .. versionchanged:: 1.2
-    This setting can now be overriden by setting :setting:`USE_L10N` to ``True``.
+    :setting:`USE_L10N` 置为 ``True`` 时，该设置项的值将被覆盖。
 
-See also :setting:`DATETIME_FORMAT`, :setting:`TIME_FORMAT` and :setting:`SHORT_DATE_FORMAT`.
+
+:setting:`DATETIME_FORMAT` ， :setting:`TIME_FORMAT` 和 :setting:`SHORT_DATE_FORMAT` 亦是如此。
 
 .. setting:: DATE_INPUT_FORMATS
 
@@ -636,15 +636,16 @@ DATE_INPUT_FORMATS
     '%b %d, %Y', '%d %b %Y', '%d %b, %Y', '%B %d %Y',
     '%B %d, %Y', '%d %B %Y', '%d %B, %Y')
 
-A tuple of formats that will be accepted when inputting data on a date field.
-Formats will be tried in order, using the first valid one. Note that these
-format strings use Python's datetime_ module syntax, not the format strings
-from the ``date`` Django template tag.
+该项是一个元组，表示日期字段上可用的日期输入格式。
+Django会按顺序尝试元组内的日期格式，直至得到匹配正确的有效结果为止。
+要注意这些格式字符串使用的是Python内置的 datetime_ 模块的语法，而非
+Django的 ``date`` 模板标签所用的格式字符串。
 
-When :setting:`USE_L10N` is ``True``, the locale-dictated format has higher
-precedence and will be applied instead.
 
-See also :setting:`DATETIME_INPUT_FORMATS` and :setting:`TIME_INPUT_FORMATS`.
+当 :setting:`USE_L10N` 设为 ``True`` 时，
+本地语言环境所指定的格式比该设置项拥有更高的优先级。
+
+:setting:`DATETIME_INPUT_FORMATS` 和 :setting:`TIME_INPUT_FORMATS` 亦是如此。
 
 .. _datetime: http://docs.python.org/library/datetime.html#strftime-strptime-behavior
 
@@ -655,15 +656,14 @@ DATETIME_FORMAT
 
 默认值： ``'N j, Y, P'`` (e.g. ``Feb. 4, 2003, 4 p.m.``)
 
-The default formatting to use for displaying datetime fields in any part of the
-system. Note that if :setting:`USE_L10N` is set to ``True``, then the
-locale-dictated format has higher precedence and will be applied instead. See
-:tfilter:`allowed date format strings <date>`.
+显示日期时间字段时所使用的默认格式，与系统无关。要注意当 :setting:`USE_L10N` 被设为 ``True`` 时，
+本地语言环境所指定的格式拥有更高的优先级并取代该设置项。详见
+:tfilter:`日期格式字符串 <date>`.
 
 .. versionchanged:: 1.2
-    This setting can now be overriden by setting :setting:`USE_L10N` to ``True``.
+    :setting:`USE_L10N` 置为 ``True`` 时，该设置项的值将被覆盖。
 
-See also :setting:`DATE_FORMAT`, :setting:`TIME_FORMAT` and :setting:`SHORT_DATETIME_FORMAT`.
+:setting:`DATE_FORMAT`, :setting:`TIME_FORMAT` 和 :setting:`SHORT_DATETIME_FORMAT` 亦是如此。
 
 .. setting:: DATETIME_INPUT_FORMATS
 
@@ -678,15 +678,15 @@ DATETIME_INPUT_FORMATS
     '%m/%d/%Y %H:%M:%S', '%m/%d/%Y %H:%M', '%m/%d/%Y',
     '%m/%d/%y %H:%M:%S', '%m/%d/%y %H:%M', '%m/%d/%y')
 
-A tuple of formats that will be accepted when inputting data on a datetime
-field. Formats will be tried in order, using the first valid one. Note that
-these format strings use Python's datetime_ module syntax, not the format
-strings from the ``date`` Django template tag.
+该项是一个元组，表示日期时间字段上可用的输入格式。
+Django会按顺序尝试元组内的日期时间格式，直至得到匹配正确的有效结果为止。
+要注意这些格式字符串使用的是Python内置的 datetime_ 模块的语法，而非
+Django的 ``date`` 模板标签所用的格式字符串。
 
-When :setting:`USE_L10N` is ``True``, the locale-dictated format has higher
-precedence and will be applied instead.
+当 :setting:`USE_L10N` 设为 ``True`` 时，
+本地语言环境所指定的格式比该设置项拥有更高的优先级。
 
-See also :setting:`DATE_INPUT_FORMATS` and :setting:`TIME_INPUT_FORMATS`.
+:setting:`DATE_INPUT_FORMATS` 和 :setting:`TIME_INPUT_FORMATS` 亦是如此。
 
 .. _datetime: http://docs.python.org/library/datetime.html#strftime-strptime-behavior
 
@@ -697,22 +697,15 @@ DEBUG
 
 默认值： ``False``
 
-A boolean that turns on/off debug mode.
+布尔值，决定是否启用调试模式。
 
-Never deploy a site into production with :setting:`DEBUG` turned on.
+切忌在生产用站点上启 :setting:`DEBUG` 为 True 。切记切记切记！
 
-Did you catch that? NEVER deploy a site into production with :setting:`DEBUG`
-turned on.
+调试模式的特性之一就是会显示详细的错误信息页。在调试模式下，如果你的应用抛出了某个异常，
+Django会显示详细的错误消息回溯(traceback)，其中包含很多当前环境的元信息——诸如当前Django settings( ``settings.py`` )定义的所有配置项。
 
-One of the main features of debug mode is the display of detailed error pages.
-If your app raises an exception when ``DEBUG`` is ``True``, Django will display
-a detailed traceback, including a lot of metadata about your environment, such
-as all the currently defined Django settings (from ``settings.py``).
-
-As a security measure, Django will *not* include settings that might be
-sensitive (or offensive), such as ``SECRET_KEY`` or ``PROFANITIES_LIST``.
-Specifically, it will exclude any setting whose name includes any of the
-following:
+做为一项安全措施，在调试模式下，Django不会显示敏感或易于被利用的设置项——诸如 ``SECRET_KEY`` 或 ``PROFANITIES_LIST`` 。
+具体来说，下列设置项将被排除在显示之外：
 
     * API
     * KEY
@@ -723,20 +716,15 @@ following:
     * TOKEN
 
 .. versionchanged:: 1.4
+   
+    在排除之列添加了 ``'PASSWORD'`` ``'PASS'``. ``'API'``, ``'TOKEN'`` 和 ``'KEY'`` 。
 
-    We changed ``'PASSWORD'`` ``'PASS'``. ``'API'``, ``'TOKEN'`` and ``'KEY'``
-    were added.
+注意上述设置都是局部匹配的， ``'PASS'`` 也可以匹配 PASSWORD ，
+而 ``'TOKEN'`` 也匹配 TOKENIZED ，等等。
 
-Note that these are *partial* matches. ``'PASS'`` will also match PASSWORD,
-just as ``'TOKEN'`` will also match TOKENIZED and so on.
+还要注意的是，有很多内容不适合对公开，诸如文件路径，配置选项以及一些会给服务器带来安全隐患的敏感信息。
 
-Still, note that there are always going to be sections of your debug output
-that are inappropriate for public consumption. File paths, configuration
-options and the like all give attackers extra information about your server.
-
-It is also important to remember that when running with :setting:`DEBUG`
-turned on, Django will remember every SQL query it executes. This is useful
-when you're debugging, but it'll rapidly consume memory on a production server.
+还有一点要记住就是在调试模式下，Django会记住每个运行的SQL查询。这对于调试是非常有帮助的，但在生产服务器却会迅速耗光内存。
 
 .. _django/views/debug.py: https://code.djangoproject.com/browser/django/trunk/django/views/debug.py
 
@@ -745,10 +733,8 @@ DEBUG_PROPAGATE_EXCEPTIONS
 
 默认值： ``False``
 
-If set to True, Django's normal exception handling of view functions
-will be suppressed, and exceptions will propagate upwards.  This can
-be useful for some test setups, and should never be used on a live
-site.
+设为True时，Django针对视图函式的普通异常的处理将被抑制，异常将继续向上传递。
+这对某些测试设置非常有用，千万不要用在在线站点中。
 
 .. setting:: DECIMAL_SEPARATOR
 
@@ -757,7 +743,7 @@ DECIMAL_SEPARATOR
 
 .. versionadded:: 1.2
 
-默认值： ``'.'`` (Dot)
+默认值： ``'.'`` (点)
 
 Default decimal separator used when formatting decimal numbers.
 
@@ -862,8 +848,8 @@ EMAIL_BACKEND
 
 默认值： ``'django.core.mail.backends.smtp.EmailBackend'``
 
-The backend to use for sending emails. For the list of available backends see
-:doc:`/topics/email`.
+用于发送邮件的后端。详见
+:doc:`/topics/email` 了解可用的后端。
 
 .. setting:: EMAIL_FILE_PATH
 
@@ -872,9 +858,9 @@ EMAIL_FILE_PATH
 
 .. versionadded:: 1.2
 
-默认值： Not defined
+默认值： 未定义
 
-The directory used by the ``file`` email backend to store output files.
+使用 ``file`` 邮件后端时用以存储输出文件的目录。
 
 .. setting:: EMAIL_HOST
 
@@ -883,9 +869,9 @@ EMAIL_HOST
 
 默认值： ``'localhost'``
 
-The host to use for sending email.
+用于发送邮件的主机。
 
-See also :setting:`EMAIL_PORT`.
+详见 :setting:`EMAIL_PORT` 。
 
 .. setting:: EMAIL_HOST_PASSWORD
 
@@ -920,7 +906,7 @@ EMAIL_PORT
 
 默认值： ``25``
 
-Port to use for the SMTP server defined in :setting:`EMAIL_HOST`.
+SMTP服务器( :setting:`EMAIL_HOST` )使用的发邮端口。
 
 .. setting:: EMAIL_SUBJECT_PREFIX
 
@@ -940,7 +926,7 @@ EMAIL_USE_TLS
 
 默认值： ``False``
 
-Whether to use a TLS (secure) connection when talking to the SMTP server.
+与SMTP服务器通信时，是否启动TLS链接(安全链接)。
 
 .. setting:: FILE_CHARSET
 
