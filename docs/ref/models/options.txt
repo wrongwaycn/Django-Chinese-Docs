@@ -1,13 +1,13 @@
 ======================
-Model ``Meta`` options
+Model 的 ``Meta`` 选项
 ======================
 
-This document explains all the possible :ref:`metadata options
-<meta-options>` that you can give your model in its internal
-``class Meta``.
+本文介绍你能在model中使用的 ``class Meta`` 内嵌类的所有 :ref:`元数据选项 (meta options)
+<meta-options>`
 
-Available ``Meta`` options
-==========================
+
+可用的 ``Meta`` 选项
+====================
 
 .. currentmodule:: django.db.models
 
@@ -16,269 +16,240 @@ Available ``Meta`` options
 
 .. attribute:: Options.abstract
 
-    If ``abstract = True``, this model will be an
-    :ref:`abstract base class <abstract-base-classes>`.
+    如果 ``abstract = True`` ，这个 model 就是一个 :ref:`抽象基类 <abstract-base-classes>`
+    。
 
 ``app_label``
 -------------
 
 .. attribute:: Options.app_label
 
-    If a model exists outside of the standard :file:`models.py` (for instance,
-    if the app's models are in submodules of ``myapp.models``), the model must
-    define which app it is part of::
+    如果一个 model 定义在默认的 :file:`models.py` 之外 (例如，如果你的 app 的 models 在
+    ``myapp.models`` 子模块下)，你必须定义 app_label 让 Django 知道它属于哪一个 app ::
 
-        app_label = 'myapp'
+	app_label = 'myapp'
 
 ``db_table``
 ------------
 
 .. attribute:: Options.db_table
 
-    The name of the database table to use for the model::
+    定义该 model 在数据中的表名称::
 
-        db_table = 'music_album'
+	db_table = 'music_album'
 
 .. _table-names:
 
-Table names
-~~~~~~~~~~~
 
-To save you time, Django automatically derives the name of the database table
-from the name of your model class and the app that contains it. A model's
-database table name is constructed by joining the model's "app label" -- the
-name you used in :djadmin:`manage.py startapp <startapp>` -- to the model's
-class name, with an underscore between them.
+数据库中的表名称
+~~~~~~~~~~~~~~~~
 
-For example, if you have an app ``bookstore`` (as created by
-``manage.py startapp bookstore``), a model defined as ``class Book`` will have
-a database table named ``bookstore_book``.
+为了节省时间，Django 会自动的使用你的 model class 的名称和包含这个 model 的 app 名称来构建
+数据库的表名称。一个 model 的数据库表名称是通过将 "app label" -- 你在 :djadmin:`manage.py
+startapp <startapp>` 中使用的名称 -- 和 model 的类名称，加上一个下划线在他们之间来构成。
 
-To override the database table name, use the ``db_table`` parameter in
-``class Meta``.
+例如，如果你有一个 app 叫做 ``bookstore`` (使用 ``manage.py startapp bookstore`` 创建)，以
+及一个 model 定义为 ``class Book`` 这样将会创建一个名为 ``bookstore_book`` 的数据库表。
 
-If your database table name is an SQL reserved word, or contains characters that
-aren't allowed in Python variable names -- notably, the hyphen -- that's OK.
-Django quotes column and table names behind the scenes.
+如果想自定义数据库的表名称，需要在 ``class Meta`` 使用 ``db_table`` 参数来自定义。
 
-.. admonition:: Use lowercase table names for MySQL
+如果你的数据库表名称是一个SQL保留字，或者它包含不允许出现在 Python 变量中的字符 (比如连字
+符)这是没问题的。这是因为 Django 会自动给列名和表名添加引号。
 
-    It is strongly advised that you use lowercase table names when you override
-    the table name via ``db_table``, particularly if you are using the MySQL
-    backend. See the :ref:`MySQL notes <mysql-notes>` for more details.
+.. admonition:: 在 MySQL 中使用小写字母作为数据库表名称
 
+    强烈建议你在通过 ``db_table`` 重载数据库表名称时，使用小写字母，特别是当你在使用 MySQL
+    作为后台数据库时。查看 :ref:`MySQL notes <mysql-notes>` 了解更多细节。
 
 ``db_tablespace``
 -----------------
 
 .. attribute:: Options.db_tablespace
 
-    The name of the :doc:`database tablespace </topics/db/tablespaces>` to use
-    for this model. The default is the project's :setting:`DEFAULT_TABLESPACE`
-    setting, if set. If the backend doesn't support tablespaces, this option is
-    ignored.
+    定义这个 model 所使用的 :doc:`数据库 表空间 </topics/db/tablespaces>` 。如果在项目的
+    setting 中定义了 :setting:`DEFAULT_TABLESPACE` 那么它会使用这个值。如果后台数据库不支持
+    表空间，这个选项会被忽略。
 
 ``get_latest_by``
 -----------------
 
 .. attribute:: Options.get_latest_by
 
-    The name of a :class:`DateField` or :class:`DateTimeField` in the model.
-    This specifies the default field to use in your model :class:`Manager`'s
-    :class:`~QuerySet.latest` method.
+    在 model 中指定一个 :class:`DateField` 或者 :class:`DateTimeField` 。这个设置让你在使用
+    model 的 :class:`Manager` 上的 :class:`~QuerySet.latest` 方法时，默认使用指定字段来排序。
 
-    Example::
+    例如::
 
-        get_latest_by = "order_date"
+	get_latest_by = "order_date"
 
-    See the docs for :meth:`~django.db.models.query.QuerySet.latest` for more.
+    详见 :meth:`~django.db.models.query.QuerySet.latest` 。
 
 ``managed``
 -----------
 
 .. attribute:: Options.managed
 
-    Defaults to ``True``, meaning Django will create the appropriate database
-    tables in :djadmin:`syncdb` and remove them as part of a :djadmin:`reset`
-    management command. That is, Django *manages* the database tables'
-    lifecycles.
+    默认值为 ``True`` ，这意味着 Django 可以使用 :djadmin:`syncdb` 和 :djadmin:`reset` 命令
+    来创建或移除对应的数据库。换句话说， Django *管理* 了数据库的生命周期。
 
-    If ``False``, no database table creation or deletion operations will be
-    performed for this model. This is useful if the model represents an existing
-    table or a database view that has been created by some other means. This is
-    the *only* difference when ``managed=False``. All other aspects of
-    model handling are exactly the same as normal. This includes
+    如果设置为 ``False`` ，Django 将不会为当前 model 创建或者删除数据库表。 通常在表示某个
+    通过其他方法创建的现有数据表时这会非常有用。这是当 ``managed=False`` 时 *仅有* 的不同之
+    处。model 在处理所有其他方面的事情时是完全一致的。这包括
 
-    1. Adding an automatic primary key field to the model if you don't
-       declare it.  To avoid confusion for later code readers, it's
-       recommended to specify all the columns from the database table you
-       are modeling when using unmanaged models.
+    1. 如果没有声明主键字段，Django 将自动的为 model 增加一个自增的主键字段。当你使用不被*
+       管理* 的 models 时，为了避免让将来阅读代码的人迷惑，建议指明所有所有托管在 model 中的字
+       段与数据库表的关系。
 
-    2. If a model with ``managed=False`` contains a
-       :class:`~django.db.models.ManyToManyField` that points to another
-       unmanaged model, then the intermediate table for the many-to-many
-       join will also not be created. However, the intermediary table
-       between one managed and one unmanaged model *will* be created.
+    2. 如果两个非托管的 models (``managed=False``) 之间，使用了
+       :class:`~django.db.models.ManyToManyField` 关联，就不会创建多对多关系的中间表。然而
+       如果是一个托管的 model 与另一个非托管的 model 的话，多对多关系 *将会* 被创建。
 
-       If you need to change this default behavior, create the intermediary
-       table as an explicit model (with ``managed`` set as needed) and use
-       the :attr:`ManyToManyField.through` attribute to make the relation
-       use your custom model.
+       如果你需要改变默认的行为，就的显示的定义中间 model 来在数据库中创建中间表(要将
+       ``managed`` 设置为 ``True``)，然后在你的原 model 上使用
+       :attr:`ManyToManyField.through` 属性指向中间 model，就能实现自定义的多对多关系。
 
-    For tests involving models with ``managed=False``, it's up to you to ensure
-    the correct tables are created as part of the test setup.
 
-    If you're interested in changing the Python-level behavior of a model class,
-    you *could* use ``managed=False`` and create a copy of an existing model.
-    However, there's a better approach for that situation: :ref:`proxy-models`.
+    如果你的测试中包含非托管 model (``managed=False``)，那么在测试之前，你应该要确保在测试
+    创建时已经创建了正确的数据表。
+
+    如果你想更改 model 类中某个 Python 层级的行为，你 *可以* 令 ``managed=False`` ，然后创
+    建该 model 的拷贝，在拷贝中定义新的行为。不过在面对这种情况时还有个更好的办法就是使
+    用 :ref:`proxy-models` 。
+
 
 ``order_with_respect_to``
 -------------------------
 
 .. attribute:: Options.order_with_respect_to
 
-    Marks this object as "orderable" with respect to the given field. This is almost
-    always used with related objects to allow them to be ordered with respect to a
-    parent object. For example, if an ``Answer`` relates to a ``Question`` object,
-    and a question has more than one answer, and the order of answers matters, you'd
-    do this::
+    根据给定的字段对 model 排序。在关联关系中,它经常用在根据目标对象对源对象排序的场合。举
+    个例子，一个 ``Answer`` 只关联一个 ``Question`` 对象，而一个 question 对象却可以关联多
+    个 answer 对象。根据 question 对 answer 排序，你应该这么做::
 
-        class Answer(models.Model):
-            question = models.ForeignKey(Question)
-            # ...
+	class Answer(models.Model):
+	    question = models.ForeignKey(Question)
+	    # ...
 
-            class Meta:
-                order_with_respect_to = 'question'
+	    class Meta:
+		order_with_respect_to = 'question'
 
-    When ``order_with_respect_to`` is set, two additional methods are provided to
-    retrieve and to set the order of the related objects: ``get_RELATED_order()``
-    and ``set_RELATED_order()``, where ``RELATED`` is the lowercased model name. For
-    example, assuming that a ``Question`` object has multiple related ``Answer``
-    objects, the list returned contains the primary keys of the related ``Answer``
-    objects::
+    当 ``order_with_respect_to`` 被设置时，会提供两个附加的方法用于获取和设置关联对象的排序：
+    ``get_RELATED_order()`` 和 ``set_RELATED_order()`` ，这其中的 ``RELATED`` 是 model 的小
+    写名字。例如，假定一个 ``Question`` 对象关联到多个 ``Answer`` 对象，这将返回一个包含
+    ``Answer`` 对象主键的列表::
 
-        >>> question = Question.objects.get(id=1)
-        >>> question.get_answer_order()
-        [1, 2, 3]
+	>>> question = Question.objects.get(id=1)
+	>>> question.get_answer_order()
+	[1, 2, 3]
 
-    The order of a ``Question`` object's related ``Answer`` objects can be set by
-    passing in a list of ``Answer`` primary keys::
+    可以通过传入一个 ``Answer`` 主键的列表的方式来设置 ``Question`` 对象关联的 ``Answer``
+    对象的顺序::
 
-        >>> question.set_answer_order([3, 1, 2])
+	>>> question.set_answer_order([3, 1, 2])
 
-    The related objects also get two methods, ``get_next_in_order()`` and
-    ``get_previous_in_order()``, which can be used to access those objects in their
-    proper order. Assuming the ``Answer`` objects are ordered by ``id``::
+    关联的对象同样有两个方法, ``get_next_in_order()`` 和 ``get_previous_in_order()`` ， 可
+    以用来访问那些特定的对象。假定 ``Answer`` 对象是以 ``id`` 排序的::
 
-        >>> answer = Answer.objects.get(id=2)
-        >>> answer.get_next_in_order()
-        <Answer: 3>
-        >>> answer.get_previous_in_order()
-        <Answer: 1>
+	>>> answer = Answer.objects.get(id=2)
+	>>> answer.get_next_in_order()
+	<Answer: 3>
+	>>> answer.get_previous_in_order()
+	<Answer: 1>
 
-.. admonition:: Changing order_with_respect_to
+.. admonition:: 改变 order_with_respect_to 时注意
 
-        ``order_with_respect_to`` adds an additional field/database column
-        named ``_order``, so be sure to handle that as you would any other
-        change to your models if you add or change ``order_with_respect_to``
-        after your initial :djadmin:`syncdb`.
+	``order_with_respect_to`` 增加了一个名为 ``_order`` 的字段(数据库字段)，因此在你进
+	行 :djadmin:`syncdb` 操作后，如果你增加或者改变了 ``order_with_respect_to`` 请确保
+	处理得当。
 
 ``ordering``
 ------------
 
 .. attribute:: Options.ordering
 
-    The default ordering for the object, for use when obtaining lists of objects::
+    定义了当获取对象的列表时，对象的默认排序::
 
-        ordering = ['-order_date']
+	ordering = ['-order_date']
 
-    This is a tuple or list of strings. Each string is a field name with an optional
-    "-" prefix, which indicates descending order. Fields without a leading "-" will
-    be ordered ascending. Use the string "?" to order randomly.
+    这是一个字符串的元组或列表。没一个字符串都是由一个字段名和一个可选的表明降序的 "-" 前缀构成。
+    当字段名前面没有 "-" 时，将默认使用升序排列。使用 "?" 将会随机排列。
 
-    For example, to order by a ``pub_date`` field ascending, use this::
+    例如，以 ``pub_date`` 字段升序排序，可用::
 
-        ordering = ['pub_date']
+	ordering = ['pub_date']
 
-    To order by ``pub_date`` descending, use this::
+    以 ``pub_date`` 降序排列时，可用::
 
-        ordering = ['-pub_date']
+	ordering = ['-pub_date']
 
-    To order by ``pub_date`` descending, then by ``author`` ascending, use this::
+    以 ``pub_date`` 降序排列，然后再以 ``author`` 升序排列，可用::
 
-        ordering = ['-pub_date', 'author']
+	ordering = ['-pub_date', 'author']
 
     .. versionchanged:: 1.4
-       The Django admin honors all elements in the list/tuple; before 1.4, only
-       the first one was respected.
+       Django admin 将采用列表/元组中所有的元素; 在 1.4 版之前, 只有第一个元素被采用。
 
 ``permissions``
 ---------------
 
 .. attribute:: Options.permissions
 
-    Extra permissions to enter into the permissions table when creating this object.
-    Add, delete and change permissions are automatically created for each object
-    that has ``admin`` set. This example specifies an extra permission,
-    ``can_deliver_pizzas``::
+    在创建对象时，添加到权限表当中的附加权限信息。Django 自动为每个设置了 ``admin`` 的对象创建了添
+    加，删除和修改的权限。下面这个例子展示了如何添加一个附加的权限 ``can_deliver_pizzas``::
 
-        permissions = (("can_deliver_pizzas", "Can deliver pizzas"),)
+	permissions = (("can_deliver_pizzas", "Can deliver pizzas"),)
 
-    This is a list or tuple of 2-tuples in the format ``(permission_code,
-    human_readable_permission_name)``.
+    该项可以是一个列表或一个由两个元组构成的元组，以这样的格式 ``(permission_code,
+    human_readable_permission_name)`` 。
 
 ``proxy``
 ---------
 
 .. attribute:: Options.proxy
 
-    If ``proxy = True``, a model which subclasses another model will be treated as
-    a :ref:`proxy model <proxy-models>`.
+    如果 ``proxy = True`` ，表示该 model 是其父类的代理 model :ref:`proxy model <proxy-models>` 。
 
 ``unique_together``
 -------------------
 
 .. attribute:: Options.unique_together
 
-    Sets of field names that, taken together, must be unique::
+    用来设置的不重复的字段组合，必须唯一(将两个字段做联合唯一)::
 
-        unique_together = (("driver", "restaurant"),)
+	unique_together = (("driver", "restaurant"),)
 
-    This is a list of lists of fields that must be unique when considered together.
-    It's used in the Django admin and is enforced at the database level (i.e., the
-    appropriate ``UNIQUE`` statements are included in the ``CREATE TABLE``
-    statement).
+    它是一个字段名称的列表，列表内的字段组合在数据库中是唯一，不重复的，也就是说不可以有两
+    个对象，它们在列表中的字段值是完全相同的。它被用在 Django admin 后台，在数据库层级约束
+    数据。(比如，在 ``CREATE TABLE`` 语句中包含 ``UNIQUE`` 关键字)
 
-    For convenience, unique_together can be a single list when dealing with a single
-    set of fields::
+    为了使用方便，你可以赋给该项一个单独的字段列表的元组::
 
-        unique_together = ("driver", "restaurant")
+	unique_together = ("driver", "restaurant")
 
-    A :class:`~django.db.models.ManyToManyField` cannot be included in
-    unique_together. (It's not clear what that would even mean!) If you
-    need to validate uniqueness related to a
-    :class:`~django.db.models.ManyToManyField`, try using a signal or
-    an explicit :attr:`through <ManyToManyField.through>` model.
+    一个 :class:`~django.db.models.ManyToManyField` 不能包含在 ``unique_together`` 中。 (这
+    将会导致它看起来不明不白！) 如果你需要验证关联到
+    :class:`~django.db.models.ManyToManyField` 字段的唯一性验证，尝试使用 signal(信号) 或者
+    明确指定 model 的 :attr:`through <ManyToManyField.through>` 属性。
 
 ``verbose_name``
 ----------------
 
 .. attribute:: Options.verbose_name
 
-    A human-readable name for the object, singular::
+    指明一个易于理解和表述的对象名称，单数形式::
 
-        verbose_name = "pizza"
+	verbose_name = "pizza"
 
-    If this isn't given, Django will use a munged version of the class name:
-    ``CamelCase`` becomes ``camel case``.
+    如果这个值没有设置， Django 将会使用该 model 的类名的分词形式作为他的对象表述名:
+    ``CamelCase`` 将会转换为 ``camel case`` 。
 
 ``verbose_name_plural``
 -----------------------
 
 .. attribute:: Options.verbose_name_plural
 
-    The plural name for the object::
+    对象的复数表述名::
 
-        verbose_name_plural = "stories"
+	verbose_name_plural = "stories"
 
-    If this isn't given, Django will use :attr:`~Options.verbose_name` + ``"s"``.
+    如果没有指定，Django 会使用 :attr:`~Options.verbose_name` + ``"s"`` 的形式作为对象的表述名。
