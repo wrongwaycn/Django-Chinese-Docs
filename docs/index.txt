@@ -1,38 +1,36 @@
 
 .. _index:
 
-====================
-Django documentation
-====================
+=================
+Django 文档中文版
+=================
 
-.. rubric:: Everything you need to know about Django (and then some).
+.. rubric:: 这里你需要知道的关于 Django 的一切(或是一些)。
 
-Getting help
+Getting Help
 ============
 
-Having trouble? We'd like to help!
+遇到困难？我们可以提供帮助！
 
-* Try the :doc:`FAQ <faq/index>` -- it's got answers to many common questions.
+* 试试 :doc:`FAQ <faq/index>` -- 它有非常多的常见问题的解答。
 
-* Looking for specific information? Try the :ref:`genindex`, :ref:`modindex` or
-  the :doc:`detailed table of contents <contents>`.
+* 寻找特定问题的信息? 试试 :ref:`genindex` (目录)， :ref:`modindex` (Module目录)或者
+  :doc:`详细内容目录 <contents>` 。
 
-* Search for information in the `archives of the django-users mailing list`_, or
-  `post a question`_.
+* 搜索 `django-users 邮件列表存档`_ 以解决问题，或是 `提交一个问题`_ 。
 
-* Ask a question in the `#django IRC channel`_, or search the `IRC logs`_ to see
-  if it's been asked before.
+* 在 `#django IRC 聊天频道`_ 提问，或者搜索 `IRC 聊天日志`_ 看看是否已经有人问过类似的问题。
 
-* Report bugs with Django in our `ticket tracker`_.
+* 在我们的 `ticket tracker`_ (问题管理系统)，报告关于 Django 的 Bug 。
 
-.. _archives of the django-users mailing list: http://groups.google.com/group/django-users/
-.. _post a question: http://groups.google.com/group/django-users/
-.. _#django IRC channel: irc://irc.freenode.net/django
-.. _IRC logs: http://django-irc-logs.com/
-.. _ticket tracker: https://code.djangoproject.com/
+.. _django-users 邮件列表存档: http://groups.google.com/group/django-users/
+.. _提交一个问题: http://groups.google.com/group/django-users/
+.. _#django IRC 聊天频道: irc://irc.freenode.net/django
+.. _IRC 聊天日志: http://django-irc-logs.com/
+.. _ticket tracker: http://code.djangoproject.com/
 
-First steps
-===========
+快速入门
+========
 
 * **From scratch:**
   :doc:`Overview <intro/overview>` |
@@ -44,12 +42,12 @@ First steps
   :doc:`Part 3 <intro/tutorial03>` |
   :doc:`Part 4 <intro/tutorial04>`
 
-The model layer
+模型 (model) 层
 ===============
 
 * **Models:**
-  :doc:`Model syntax <topics/db/models>` |
-  :doc:`Field types <ref/models/fields>` |
+  :doc:`Model 语法 <topics/db/models>` |
+  :doc:`Field 类型 <ref/models/fields>` |
   :doc:`Meta 选项 <ref/models/options>`
 
 * **QuerySets:**
@@ -74,7 +72,7 @@ The model layer
   :doc:`Providing initial data <howto/initial-data>` |
   :doc:`Optimize database access <topics/db/optimization>`
 
-The template layer
+模板 (template) 层
 ==================
 
 * **For designers:**
@@ -85,7 +83,7 @@ The template layer
   :doc:`Template API <ref/templates/api>` |
   :doc:`Custom tags and filters <howto/custom-template-tags>`
 
-The view layer
+视图 (view) 层
 ==============
 
 * **The basics:**
@@ -117,8 +115,8 @@ The view layer
   :doc:`Overview <topics/http/middleware>` |
   :doc:`Built-in middleware classes <ref/middleware>`
 
-Forms
-=====
+表单 (Forms)
+============
 
 * **The basics:**
   :doc:`Overview <topics/forms/index>` |
