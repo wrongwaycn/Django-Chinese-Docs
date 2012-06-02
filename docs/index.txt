@@ -50,7 +50,7 @@ The model layer
 * **Models:**
   :doc:`Model syntax <topics/db/models>` |
   :doc:`Field types <ref/models/fields>` |
-  :doc:`Meta options <ref/models/options>`
+  :doc:`Meta 选项 <ref/models/options>`
 
 * **QuerySets:**
   :doc:`Executing queries <topics/db/queries>` |
