@@ -32,56 +32,56 @@ Getting Help
 快速入门
 ========
 
-* **From scratch:**
-  :doc:`Overview <intro/overview>` |
-  :doc:`Installation <intro/install>`
+* **从零开始:**
+  :doc:`概要 <intro/overview>` |
+  :doc:`安装 <intro/install>`
 
-* **Tutorial:**
-  :doc:`Part 1 <intro/tutorial01>` |
-  :doc:`Part 2 <intro/tutorial02>` |
-  :doc:`Part 3 <intro/tutorial03>` |
-  :doc:`Part 4 <intro/tutorial04>`
+* **新手教程:**
+  :doc:`第1节 <intro/tutorial01>` |
+  :doc:`第2节 <intro/tutorial02>` |
+  :doc:`第3节 <intro/tutorial03>` |
+  :doc:`第4节 <intro/tutorial04>`
 
 模型 (model) 层
 ===============
 
-* **Models:**
+* **Models(模型):**
   :doc:`Model 语法 <topics/db/models>` |
-  :doc:`Field 类型 <ref/models/fields>` |
+  :doc:`字段类型 <ref/models/fields>` |
   :doc:`Meta 选项 <ref/models/options>`
 
-* **QuerySets:**
-  :doc:`Executing queries <topics/db/queries>` |
-  :doc:`QuerySet method reference <ref/models/querysets>`
+* **QuerySets(查询集):**
+  :doc:`执行查询 <topics/db/queries>` |
+  :doc:`QuerySet方法参考 <ref/models/querysets>`
 
-* **Model instances:**
-  :doc:`Instance methods <ref/models/instances>` |
-  :doc:`Accessing related objects <ref/models/relations>`
+* **Model instances(模型实例):**
+  :doc:`Instance 方法 <ref/models/instances>` |
+  :doc:`访问关联的对象 <ref/models/relations>`
 
-* **Advanced:**
-  :doc:`Managers <topics/db/managers>` |
-  :doc:`Raw SQL <topics/db/sql>` |
-  :doc:`Transactions <topics/db/transactions>` |
-  :doc:`Aggregation <topics/db/aggregation>` |
-  :doc:`Custom fields <howto/custom-model-fields>` |
-  :doc:`Multiple databases <topics/db/multi-db>`
+* **进阶:**
+  :doc:`Managers管理器 <topics/db/managers>` |
+  :doc:`SQL语句查询 <topics/db/sql>` |
+  :doc:`事务处理 <topics/db/transactions>` |
+  :doc:`数据汇聚 <topics/db/aggregation>` |
+  :doc:`自定义字段 <howto/custom-model-fields>` |
+  :doc:`多种数据库混合使用 <topics/db/multi-db>`
 
-* **Other:**
-  :doc:`Supported databases <ref/databases>` |
-  :doc:`Legacy databases <howto/legacy-databases>` |
-  :doc:`Providing initial data <howto/initial-data>` |
-  :doc:`Optimize database access <topics/db/optimization>`
+* **其他:**
+  :doc:`支持的数据库 <ref/databases>` |
+  :doc:`遗产型数据库 <howto/legacy-databases>` |
+  :doc:`为数据库提供初始化数据 <howto/initial-data>` |
+  :doc:`优化数据库 <topics/db/optimization>`
 
 模板 (template) 层
 ==================
 
-* **For designers:**
-  :doc:`Syntax overview <topics/templates>` |
-  :doc:`Built-in tags and filters <ref/templates/builtins>`
+* **For 设计师:**
+  :doc:`语法概要 <topics/templates>` |
+  :doc:`内建标签和过滤器 <ref/templates/builtins>`
 
-* **For programmers:**
-  :doc:`Template API <ref/templates/api>` |
-  :doc:`Custom tags and filters <howto/custom-template-tags>`
+* **For 程序员:**
+  :doc:`模板 API <ref/templates/api>` |
+  :doc:`自定义标签和过滤器 <howto/custom-template-tags>`
 
 视图 (view) 层
 ==============
