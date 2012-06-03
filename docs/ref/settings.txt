@@ -159,7 +159,7 @@ BACKEND
 KEY_FUNCTION
 ~~~~~~~~~~~~
 
-一个以'.'做为路径间隔的字符串，表示一个函式的可访问路径。该函式决定了如何将前缀，版本以及键名拼装成最终的缓存键。
+一个形如'xxxx.xxxx.xxx.xxx'的路径字符串，表示一个函式的可访问路径。该函式决定了如何将前缀，版本以及键名拼装成最终的缓存键。
 默认的实现方法如下::
 
     def make_key(key, key_prefix, version):
@@ -321,9 +321,7 @@ CSRF_COOKIE_SECURE
 
 默认值: ``False``
 
-Whether to use a secure cookie for the CSRF cookie. If this is set to ``True``,
-the cookie will be marked as "secure," which means browsers may ensure that the
-cookie is only sent under an HTTPS connection.
+是否对CSRF cookie进行加密。如果设为 ``True`` ，cookie将被标识为 "secure" ，这意味着浏览器确保该cookie只能通过HTTPS链接发送。
 
 .. setting:: CSRF_FAILURE_VIEW
 
@@ -334,13 +332,13 @@ CSRF_FAILURE_VIEW
 
 默认值: ``'django.views.csrf.csrf_failure'``
 
-A dotted path to the view function to be used when an incoming request
-is rejected by the CSRF protection.  The function should have this signature::
+一个形如'xxxx.xxxx.xxx.xxx'的函式路径字符串，该视图函式在请求被CSRF防护拒绝时发挥作用。
+该函式结构如下::
 
   def csrf_failure(request, reason="")
 
-where ``reason`` is a short message (intended for developers or logging, not for
-end users) indicating the reason the request was rejected.  See
+其中的 ``reason`` 是一个短消息(对于开发者或是日志比较有用，一般用户对此并不关注)
+，表示当前请求被拒绝的原因。详见
 :doc:`/ref/contrib/csrf`.
 
 
@@ -351,17 +349,14 @@ DATABASES
 
 .. versionadded:: 1.2
 
-Default: ``{}`` (Empty dictionary)
+默认值: ``{}`` (空字典)
 
-A dictionary containing the settings for all databases to be used with
-Django. It is a nested dictionary whose contents maps database aliases
-to a dictionary containing the options for an individual database.
+该设置项是一个嵌套的字典，包含了Django会用到的所有数据库设置。
+其中的每个字典项都以数据库别名做为键值，对应一个存放该数据库选项的字典。
 
-The :setting:`DATABASES` setting must configure a ``default`` database;
-any number of additional databases may also be specified.
+:setting:`DATABASES` 字典中必须定义一个 ``default`` 数据库；其他数据库可以随意命名。
 
-The simplest possible settings file is for a single-database setup using
-SQLite. This can be configured using the following::
+最简单的设置就是安装的一个单独的SQLite文件数据库。设置如下::
 
     DATABASES = {
         'default': {
@@ -370,124 +365,108 @@ SQLite. This can be configured using the following::
         }
     }
 
-For other database backends, or more complex SQLite configurations, other options
-will be required. The following inner options are available.
+对于其他数据库后端或是更灵活的SQLite配置而言，就要用到其他选项，下面就介绍其中所有的数据库选项。
 
 .. setting:: DATABASE-ENGINE
 
 ENGINE
 ~~~~~~
 
-Default: ``''`` (Empty string)
+默认值: ``''`` (空符串)
 
-The database backend to use. The built-in database backends are:
+要使用的数据库后端。Django内置的数据库后端有：
 
 * ``'django.db.backends.postgresql_psycopg2'``
 * ``'django.db.backends.mysql'``
 * ``'django.db.backends.sqlite3'``
 * ``'django.db.backends.oracle'``
 
-You can use a database backend that doesn't ship with Django by setting
-``ENGINE`` to a fully-qualified path (i.e.
-``mypackage.backends.whatever``). Writing a whole new database backend from
-scratch is left as an exercise to the reader; see the other backends for
-examples.
+我们可以通过设置　``ENGINE`` 而使用非Django提供的第三方数据库后端——将其设为某个后端的可访问路径，例如
+``mypackage.backends.whatever``)。您不妨参考其他后端，从头编写一个完整的新数据库后端，以此做为一个读者练习。
+
 
 .. note::
-    Prior to Django 1.2, you could use a short version of the backend name
-    to reference the built-in database backends (e.g., you could use
-    ``'sqlite3'`` to refer to the SQLite backend). This format has been
-    deprecated, and will be removed in Django 1.4.
+    在Django1.2之前，我们使用一个短名称来表示Django内置的数据库后端(比如，使用``'sqlite3'`` 表示使用SQLite数据库后端)。
+    我们不建议使用这种格式，它已在Django1.4中彻底去除 。   
 
 .. setting:: HOST
 
 HOST
 ~~~~
 
-Default: ``''`` (Empty string)
+默认值: ``''`` (空字符串)
 
-Which host to use when connecting to the database. An empty string means
-localhost. Not used with SQLite.
+表示连接数据库使用哪台主机。空字符串表示本地(localhost)。使用SQLite时该项无效。
 
-If this value starts with a forward slash (``'/'``) and you're using MySQL,
-MySQL will connect via a Unix socket to the specified socket. For example::
+如果我们使用的是MySQL，且设置值以反斜杠 (``'/'``) 开头时，MySQL将通过Unix socket链接某个指定的socket。举个例子::
 
     "HOST": '/var/run/mysql'
 
-If you're using MySQL and this value *doesn't* start with a forward slash, then
-this value is assumed to be the host.
+同样仍是使用Mysql，如果该值并未以反斜杠开头，那么该值就表示某个主机名或是IP。
 
-If you're using PostgreSQL, an empty string means to use a Unix domain socket
-for the connection, rather than a network connection to localhost. If you
-explicitly need to use a TCP/IP connection on the local machine with
-PostgreSQL, specify ``localhost`` here.
+使用PostgreSQL时，空字符串表示使用Unix domain socket进行连接，而不是进行本地连接。
+如果你想明确指定PostgreSQL连接本地机器，此外就要填写为 ``localhost`` 。
 
 .. setting:: NAME
 
 NAME
 ~~~~
 
-Default: ``''`` (Empty string)
+默认值: ``''`` (空字符串)
 
-The name of the database to use. For SQLite, it's the full path to the database
-file. When specifying the path, always use forward slashes, even on Windows
-(e.g. ``C:/homes/user/mysite/sqlite3.db``).
+使用的数据库名称。对SQLite而言，该设置就是数据库文件的完整路径。要注意的是，指定文件路径时
+一定要使用斜杠，即便是在Windows平台也是如此
+(比如 ``C:/homes/user/mysite/sqlite3.db``)。
 
 .. setting:: OPTIONS
 
 OPTIONS
 ~~~~~~~
 
-Default: ``{}`` (Empty dictionary)
+默认值: ``{}`` (空字典)
 
-Extra parameters to use when connecting to the database. Available parameters
-vary depending on your database backend.
+连接数据库时要用到的其他选项。Django根据不同的数据库后端使用不同的选项。
 
-Some information on available parameters can be found in the
-:doc:`Database Backends </ref/databases>` documentation. For more information,
-consult your backend module's own documentation.
+具体的选项信息可参见
+:doc:`数据库后端 </ref/databases>` 文档，以了解您选用的数据库后端有哪些可用的选项。
 
 .. setting:: PASSWORD
 
 PASSWORD
 ~~~~~~~~
 
-Default: ``''`` (Empty string)
+默认值: ``''`` (空字符串)
 
-The password to use when connecting to the database. Not used with SQLite.
+连接数据库时使用的密码。使用SQLite时此项无效。
 
 .. setting:: PORT
 
 PORT
 ~~~~
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
-The port to use when connecting to the database. An empty string means the
-default port. Not used with SQLite.
+连接数据库时使用的端口。空字符串表示使用默认端口。使用SQLite时此项无效。
 
 .. setting:: USER
 
 USER
 ~~~~
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
-The username to use when connecting to the database. Not used with SQLite.
+连接数据库时使用的用户名。使用SQLite时此项无效。
 
 .. setting:: TEST_CHARSET
 
 TEST_CHARSET
 ~~~~~~~~~~~~
 
-Default: ``None``
+默认值： ``None``
 
-The character set encoding used to create the test database. The value of this
-string is passed directly through to the database, so its format is
-backend-specific.
+创建测试数据库时使用的字符集编码方案。因为该值是直接传给数据库的，所以它的格式是由数据库后端指定的。
 
-Supported for the PostgreSQL_ (``postgresql_psycopg2``) and MySQL_ (``mysql``)
-backends.
+该设置项对 PostgreSQL_ (``postgresql_psycopg2``) 和 MySQL_ (``mysql``) 后端有效。
 
 .. _PostgreSQL: http://www.postgresql.org/docs/8.2/static/multibyte.html
 .. _MySQL: http://dev.mysql.com/doc/refman/5.0/en/charset-database.html
@@ -497,12 +476,11 @@ backends.
 TEST_COLLATION
 ~~~~~~~~~~~~~~
 
-Default: ``None``
+默认值： ``None``
 
-The collation order to use when creating the test database. This value is
-passed directly to the backend, so its format is backend-specific.
+创建测试数据库时使用的排序顺利。因为该值是直接传给后端的，所以它的格式由数据库后端所决定。
 
-Only supported for the ``mysql`` backend (see the `MySQL manual`_ for details).
+仅仅支持 ``mysql`` 后端 (详见 `MySQL manual`_ )。
 
 .. _MySQL manual: MySQL_
 
@@ -513,114 +491,105 @@ TEST_DEPENDENCIES
 
 .. versionadded:: 1.3
 
-Default: ``['default']``, for all databases other than ``default``,
-which has no dependencies.
+默认值： 对其他非 ``default`` 且没有依赖关联的数据库而言，默认值就是 ``['default']`` 。
 
-The creation-order dependencies of the database. See the documentation
-on :ref:`controlling the creation order of test databases
-<topics-testing-creation-dependencies>` for details.
+数据库依赖关联的创建顺序。详见文档
+:ref:`控制测试数据库的创建顺序
+<topics-testing-creation-dependencies>` 。
 
 .. setting:: TEST_MIRROR
 
 TEST_MIRROR
 ~~~~~~~~~~~
 
-Default: ``None``
+默认值： ``None``
 
-The alias of the database that this database should mirror during
-testing.
+测试时的镜像数据库别名。
 
-This setting exists to allow for testing of master/slave
-configurations of multiple databases. See the documentation on
-:ref:`testing master/slave configurations
-<topics-testing-masterslave>` for details.
+该项适用于测试多个数据库的主/从配置。
+详见
+:ref:`测试主从配置
+<topics-testing-masterslave>` 。
 
 .. setting:: TEST_NAME
 
 TEST_NAME
 ~~~~~~~~~
 
-Default: ``None``
+默认值： ``None``
 
-The name of database to use when running the test suite.
+运行测试案例时使用的数据库的名称。
 
-If the default value (``None``) is used with the SQLite database engine, the
-tests will use a memory resident database. For all other database engines the
-test database will use the name ``'test_' + DATABASE_NAME``.
+使用SQLite数据库时，如果使用默认值 (``None``) ，测试时就会使用一个驻留内存的数据库。
+对于其他数据库引擎来说，测试时的数据库名称就是 ``'test_' + DATABASE_NAME`` 。
 
-See :doc:`/topics/testing`.
+详见 :doc:`/topics/testing`.
 
 .. setting:: TEST_CREATE
 
 TEST_CREATE
 ~~~~~~~~~~~
 
-Default: ``True``
+默认值： ``True``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-If it is set to ``False``, the test tablespaces won't be automatically created
-at the beginning of the tests and dropped at the end.
+如果设为 ``False`` ，就不会在测试起始和结束时自动创建和删除测试表空间。
 
 .. setting:: TEST_USER
 
 TEST_USER
 ~~~~~~~~~
 
-Default: ``None``
+默认值： ``None``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-The username to use when connecting to the Oracle database that will be used
-when running tests. If not provided, Django will use ``'test_' + USER``.
+运行测试时连接Oracle数据库所使用的用户名。如果为空，Django会使用 ``'test_' + USER`` 做为默认用户名。
 
 .. setting:: TEST_USER_CREATE
 
 TEST_USER_CREATE
 ~~~~~~~~~~~~~~~~
 
-Default: ``True``
+默认值： ``True``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-If it is set to ``False``, the test user won't be automatically created at the
-beginning of the tests and dropped at the end.
+如果设为 ``False`` ，就不在会测试起始和结束时自动创建和删除测试用户。
 
 .. setting:: TEST_PASSWD
 
 TEST_PASSWD
 ~~~~~~~~~~~
 
-Default: ``None``
+默认值： ``None``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-The password to use when connecting to the Oracle database that will be used
-when running tests. If not provided, Django will use a hardcoded default value.
+运行测试时连接Oracle数据库所使用的密码。如果为空，Django会使用一个硬编码的默认值。
 
 .. setting:: TEST_TBLSPACE
 
 TEST_TBLSPACE
 ~~~~~~~~~~~~~
 
-Default: ``None``
+默认值： ``None``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-The name of the tablespace that will be used when running tests. If not
-provided, Django will use ``'test_' + NAME``.
+运行测试时使用的表空间的名称。如果为空，Django会使用 ``'test_' + NAME`` 做为表空间名。
 
 .. setting:: TEST_TBLSPACE_TMP
 
 TEST_TBLSPACE_TMP
 ~~~~~~~~~~~~~~~~~
 
-Default: ``None``
+默认值： ``None``
 
-This is an Oracle-specific setting.
+该项只适用于Oracle数据库。
 
-The name of the temporary tablespace that will be used when running tests. If
-not provided, Django will use ``'test_' + NAME + '_temp'``.
+运行测试时使用的临时表空间的名称。如果为空，Django会使用 ``'test_' + NAME + '_temp'`` 做为临时表空间的名称。
 
 .. setting:: DATABASE_ROUTERS
 
@@ -629,30 +598,30 @@ DATABASE_ROUTERS
 
 .. versionadded:: 1.2
 
-Default: ``[]`` (Empty list)
+默认值： ``[]`` (空列表)
 
-The list of routers that will be used to determine which database
-to use when performing a database queries.
+该路由列表决定了执行一个数据库查询时使用哪个数据库。
 
-See the documentation on :ref:`automatic database routing in multi
-database configurations <topics-db-multi-db-routing>`.
+详见
+:ref:`使用多数据库配置时自切切换数据库路由
+<topics-db-multi-db-routing>` 。
 
 .. setting:: DATE_FORMAT
 
 DATE_FORMAT
 -----------
 
-Default: ``'N j, Y'`` (e.g. ``Feb. 4, 2003``)
+默认值： ``'N j, Y'`` (e.g. ``Feb. 4, 2003``)
 
-The default formatting to use for displaying date fields in any part of the
-system. Note that if :setting:`USE_L10N` is set to ``True``, then the
-locale-dictated format has higher precedence and will be applied instead. See
-:tfilter:`allowed date format strings <date>`.
+显示日期字段时所使用的默认格式，与系统无关。要注意当 :setting:`USE_L10N` 被设为 ``True`` 时，
+本地语言环境所指定的格式拥有更高的优先级并取代该设置项。详见
+:tfilter:`日期格式字符串 <date>` 。
 
 .. versionchanged:: 1.2
-    This setting can now be overriden by setting :setting:`USE_L10N` to ``True``.
+    :setting:`USE_L10N` 置为 ``True`` 时，该设置项的值将被覆盖。
 
-See also :setting:`DATETIME_FORMAT`, :setting:`TIME_FORMAT` and :setting:`SHORT_DATE_FORMAT`.
+
+:setting:`DATETIME_FORMAT` ， :setting:`TIME_FORMAT` 和 :setting:`SHORT_DATE_FORMAT` 亦是如此。
 
 .. setting:: DATE_INPUT_FORMATS
 
@@ -661,21 +630,22 @@ DATE_INPUT_FORMATS
 
 .. versionadded:: 1.2
 
-Default::
+默认值：:
 
     ('%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', '%b %d %Y',
     '%b %d, %Y', '%d %b %Y', '%d %b, %Y', '%B %d %Y',
     '%B %d, %Y', '%d %B %Y', '%d %B, %Y')
 
-A tuple of formats that will be accepted when inputting data on a date field.
-Formats will be tried in order, using the first valid one. Note that these
-format strings use Python's datetime_ module syntax, not the format strings
-from the ``date`` Django template tag.
+该项是一个元组，表示日期字段上可用的日期输入格式。
+Django会按顺序尝试元组内的日期格式，直至得到匹配正确的有效结果为止。
+要注意这些格式字符串使用的是Python内置的 datetime_ 模块的语法，而非
+Django的 ``date`` 模板标签所用的格式字符串。
 
-When :setting:`USE_L10N` is ``True``, the locale-dictated format has higher
-precedence and will be applied instead.
 
-See also :setting:`DATETIME_INPUT_FORMATS` and :setting:`TIME_INPUT_FORMATS`.
+当 :setting:`USE_L10N` 设为 ``True`` 时，
+本地语言环境所指定的格式比该设置项拥有更高的优先级。
+
+:setting:`DATETIME_INPUT_FORMATS` 和 :setting:`TIME_INPUT_FORMATS` 亦是如此。
 
 .. _datetime: http://docs.python.org/library/datetime.html#strftime-strptime-behavior
 
@@ -684,17 +654,16 @@ See also :setting:`DATETIME_INPUT_FORMATS` and :setting:`TIME_INPUT_FORMATS`.
 DATETIME_FORMAT
 ---------------
 
-Default: ``'N j, Y, P'`` (e.g. ``Feb. 4, 2003, 4 p.m.``)
+默认值： ``'N j, Y, P'`` (e.g. ``Feb. 4, 2003, 4 p.m.``)
 
-The default formatting to use for displaying datetime fields in any part of the
-system. Note that if :setting:`USE_L10N` is set to ``True``, then the
-locale-dictated format has higher precedence and will be applied instead. See
-:tfilter:`allowed date format strings <date>`.
+显示日期时间字段时所使用的默认格式，与系统无关。要注意当 :setting:`USE_L10N` 被设为 ``True`` 时，
+本地语言环境所指定的格式拥有更高的优先级并取代该设置项。详见
+:tfilter:`日期格式字符串 <date>`.
 
 .. versionchanged:: 1.2
-    This setting can now be overriden by setting :setting:`USE_L10N` to ``True``.
+    :setting:`USE_L10N` 置为 ``True`` 时，该设置项的值将被覆盖。
 
-See also :setting:`DATE_FORMAT`, :setting:`TIME_FORMAT` and :setting:`SHORT_DATETIME_FORMAT`.
+:setting:`DATE_FORMAT`, :setting:`TIME_FORMAT` 和 :setting:`SHORT_DATETIME_FORMAT` 亦是如此。
 
 .. setting:: DATETIME_INPUT_FORMATS
 
@@ -703,21 +672,21 @@ DATETIME_INPUT_FORMATS
 
 .. versionadded:: 1.2
 
-Default::
+默认值：:
 
     ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%Y-%m-%d',
     '%m/%d/%Y %H:%M:%S', '%m/%d/%Y %H:%M', '%m/%d/%Y',
     '%m/%d/%y %H:%M:%S', '%m/%d/%y %H:%M', '%m/%d/%y')
 
-A tuple of formats that will be accepted when inputting data on a datetime
-field. Formats will be tried in order, using the first valid one. Note that
-these format strings use Python's datetime_ module syntax, not the format
-strings from the ``date`` Django template tag.
+该项是一个元组，表示日期时间字段上可用的输入格式。
+Django会按顺序尝试元组内的日期时间格式，直至得到匹配正确的有效结果为止。
+要注意这些格式字符串使用的是Python内置的 datetime_ 模块的语法，而非
+Django的 ``date`` 模板标签所用的格式字符串。
 
-When :setting:`USE_L10N` is ``True``, the locale-dictated format has higher
-precedence and will be applied instead.
+当 :setting:`USE_L10N` 设为 ``True`` 时，
+本地语言环境所指定的格式比该设置项拥有更高的优先级。
 
-See also :setting:`DATE_INPUT_FORMATS` and :setting:`TIME_INPUT_FORMATS`.
+:setting:`DATE_INPUT_FORMATS` 和 :setting:`TIME_INPUT_FORMATS` 亦是如此。
 
 .. _datetime: http://docs.python.org/library/datetime.html#strftime-strptime-behavior
 
@@ -726,24 +695,17 @@ See also :setting:`DATE_INPUT_FORMATS` and :setting:`TIME_INPUT_FORMATS`.
 DEBUG
 -----
 
-Default: ``False``
+默认值： ``False``
 
-A boolean that turns on/off debug mode.
+布尔值，决定是否启用调试模式。
 
-Never deploy a site into production with :setting:`DEBUG` turned on.
+切忌在生产用站点上启 :setting:`DEBUG` 为 True 。切记切记切记！
 
-Did you catch that? NEVER deploy a site into production with :setting:`DEBUG`
-turned on.
+调试模式的特性之一就是会显示详细的错误信息页。在调试模式下，如果你的应用抛出了某个异常，
+Django会显示详细的错误消息回溯(traceback)，其中包含很多当前环境的元信息——诸如当前Django settings( ``settings.py`` )定义的所有配置项。
 
-One of the main features of debug mode is the display of detailed error pages.
-If your app raises an exception when ``DEBUG`` is ``True``, Django will display
-a detailed traceback, including a lot of metadata about your environment, such
-as all the currently defined Django settings (from ``settings.py``).
-
-As a security measure, Django will *not* include settings that might be
-sensitive (or offensive), such as ``SECRET_KEY`` or ``PROFANITIES_LIST``.
-Specifically, it will exclude any setting whose name includes any of the
-following:
+做为一项安全措施，在调试模式下，Django不会显示敏感或易于被利用的设置项——诸如 ``SECRET_KEY`` 或 ``PROFANITIES_LIST`` 。
+具体来说，下列设置项将被排除在显示之外：
 
     * API
     * KEY
@@ -754,32 +716,25 @@ following:
     * TOKEN
 
 .. versionchanged:: 1.4
+   
+    在排除之列添加了 ``'PASSWORD'`` ``'PASS'``. ``'API'``, ``'TOKEN'`` 和 ``'KEY'`` 。
 
-    We changed ``'PASSWORD'`` ``'PASS'``. ``'API'``, ``'TOKEN'`` and ``'KEY'``
-    were added.
+注意上述设置都是局部匹配的， ``'PASS'`` 也可以匹配 PASSWORD ，
+而 ``'TOKEN'`` 也匹配 TOKENIZED ，等等。
 
-Note that these are *partial* matches. ``'PASS'`` will also match PASSWORD,
-just as ``'TOKEN'`` will also match TOKENIZED and so on.
+还要注意的是，有很多内容不适合对公开，诸如文件路径，配置选项以及一些会给服务器带来安全隐患的敏感信息。
 
-Still, note that there are always going to be sections of your debug output
-that are inappropriate for public consumption. File paths, configuration
-options and the like all give attackers extra information about your server.
-
-It is also important to remember that when running with :setting:`DEBUG`
-turned on, Django will remember every SQL query it executes. This is useful
-when you're debugging, but it'll rapidly consume memory on a production server.
+还有一点要记住就是在调试模式下，Django会记住每个运行的SQL查询。这对于调试是非常有帮助的，但在生产服务器却会迅速耗光内存。
 
 .. _django/views/debug.py: https://code.djangoproject.com/browser/django/trunk/django/views/debug.py
 
 DEBUG_PROPAGATE_EXCEPTIONS
 --------------------------
 
-Default: ``False``
+默认值： ``False``
 
-If set to True, Django's normal exception handling of view functions
-will be suppressed, and exceptions will propagate upwards.  This can
-be useful for some test setups, and should never be used on a live
-site.
+设为True时，Django针对视图函式的普通异常的处理将被抑制，异常将继续向上传递。
+这对某些测试设置非常有用，千万不要用在在线站点中。
 
 .. setting:: DECIMAL_SEPARATOR
 
@@ -788,7 +743,7 @@ DECIMAL_SEPARATOR
 
 .. versionadded:: 1.2
 
-Default: ``'.'`` (Dot)
+默认值： ``'.'`` (点)
 
 Default decimal separator used when formatting decimal numbers.
 
@@ -804,7 +759,7 @@ See also :setting:`NUMBER_GROUPING`, :setting:`THOUSAND_SEPARATOR` and
 DEFAULT_CHARSET
 ---------------
 
-Default: ``'utf-8'``
+默认值： ``'utf-8'``
 
 Default charset to use for all ``HttpResponse`` objects, if a MIME type isn't
 manually specified. Used with :setting:`DEFAULT_CONTENT_TYPE` to construct the
@@ -815,7 +770,7 @@ manually specified. Used with :setting:`DEFAULT_CONTENT_TYPE` to construct the
 DEFAULT_CONTENT_TYPE
 --------------------
 
-Default: ``'text/html'``
+默认值： ``'text/html'``
 
 Default content type to use for all ``HttpResponse`` objects, if a MIME type
 isn't manually specified. Used with :setting:`DEFAULT_CHARSET` to construct
@@ -826,7 +781,7 @@ the ``Content-Type`` header.
 DEFAULT_EXCEPTION_REPORTER_FILTER
 ---------------------------------
 
-Default: :class:`django.views.debug.SafeExceptionReporterFilter`
+默认值： :class:`django.views.debug.SafeExceptionReporterFilter`
 
 Default exception reporter filter class to be used if none has been assigned to
 the :class:`HttpRequest` instance yet.
@@ -837,7 +792,7 @@ See :ref:`Filtering error reports<filtering-error-reports>`.
 DEFAULT_FILE_STORAGE
 --------------------
 
-Default: :class:`django.core.files.storage.FileSystemStorage`
+默认值： :class:`django.core.files.storage.FileSystemStorage`
 
 Default file storage class to be used for any file-related operations that don't
 specify a particular storage system. See :doc:`/topics/files`.
@@ -847,7 +802,7 @@ specify a particular storage system. See :doc:`/topics/files`.
 DEFAULT_FROM_EMAIL
 ------------------
 
-Default: ``'webmaster@localhost'``
+默认值： ``'webmaster@localhost'``
 
 Default email address to use for various automated correspondence from the
 site manager(s).
@@ -857,7 +812,7 @@ site manager(s).
 DEFAULT_INDEX_TABLESPACE
 ------------------------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 Default tablespace to use for indexes on fields that don't specify
 one, if the backend supports it (see :doc:`/topics/db/tablespaces`).
@@ -867,7 +822,7 @@ one, if the backend supports it (see :doc:`/topics/db/tablespaces`).
 DEFAULT_TABLESPACE
 ------------------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 Default tablespace to use for models that don't specify one, if the
 backend supports it (see :doc:`/topics/db/tablespaces`).
@@ -877,7 +832,7 @@ backend supports it (see :doc:`/topics/db/tablespaces`).
 DISALLOWED_USER_AGENTS
 ----------------------
 
-Default: ``()`` (Empty tuple)
+默认值： ``()`` (Empty tuple)
 
 List of compiled regular expression objects representing User-Agent strings that
 are not allowed to visit any page, systemwide. Use this for bad robots/crawlers.
@@ -891,10 +846,10 @@ EMAIL_BACKEND
 
 .. versionadded:: 1.2
 
-Default: ``'django.core.mail.backends.smtp.EmailBackend'``
+默认值： ``'django.core.mail.backends.smtp.EmailBackend'``
 
-The backend to use for sending emails. For the list of available backends see
-:doc:`/topics/email`.
+用于发送邮件的后端。详见
+:doc:`/topics/email` 了解可用的后端。
 
 .. setting:: EMAIL_FILE_PATH
 
@@ -903,27 +858,27 @@ EMAIL_FILE_PATH
 
 .. versionadded:: 1.2
 
-Default: Not defined
+默认值： 未定义
 
-The directory used by the ``file`` email backend to store output files.
+使用 ``file`` 邮件后端时用以存储输出文件的目录。
 
 .. setting:: EMAIL_HOST
 
 EMAIL_HOST
 ----------
 
-Default: ``'localhost'``
+默认值： ``'localhost'``
 
-The host to use for sending email.
+用于发送邮件的主机。
 
-See also :setting:`EMAIL_PORT`.
+详见 :setting:`EMAIL_PORT` 。
 
 .. setting:: EMAIL_HOST_PASSWORD
 
 EMAIL_HOST_PASSWORD
 -------------------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 Password to use for the SMTP server defined in :setting:`EMAIL_HOST`. This
 setting is used in conjunction with :setting:`EMAIL_HOST_USER` when
@@ -937,7 +892,7 @@ See also :setting:`EMAIL_HOST_USER`.
 EMAIL_HOST_USER
 ---------------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 Username to use for the SMTP server defined in :setting:`EMAIL_HOST`.
 If empty, Django won't attempt authentication.
@@ -949,16 +904,16 @@ See also :setting:`EMAIL_HOST_PASSWORD`.
 EMAIL_PORT
 ----------
 
-Default: ``25``
+默认值： ``25``
 
-Port to use for the SMTP server defined in :setting:`EMAIL_HOST`.
+SMTP服务器( :setting:`EMAIL_HOST` )使用的发邮端口。
 
 .. setting:: EMAIL_SUBJECT_PREFIX
 
 EMAIL_SUBJECT_PREFIX
 --------------------
 
-Default: ``'[Django] '``
+默认值： ``'[Django] '``
 
 Subject-line prefix for email messages sent with ``django.core.mail.mail_admins``
 or ``django.core.mail.mail_managers``. You'll probably want to include the
@@ -969,16 +924,16 @@ trailing space.
 EMAIL_USE_TLS
 -------------
 
-Default: ``False``
+默认值： ``False``
 
-Whether to use a TLS (secure) connection when talking to the SMTP server.
+与SMTP服务器通信时，是否启动TLS链接(安全链接)。
 
 .. setting:: FILE_CHARSET
 
 FILE_CHARSET
 ------------
 
-Default: ``'utf-8'``
+默认值： ``'utf-8'``
 
 The character encoding used to decode any files read from disk. This includes
 template files and initial SQL data files.
@@ -988,7 +943,7 @@ template files and initial SQL data files.
 FILE_UPLOAD_HANDLERS
 --------------------
 
-Default::
+默认值：:
 
     ("django.core.files.uploadhandler.MemoryFileUploadHandler",
      "django.core.files.uploadhandler.TemporaryFileUploadHandler",)
@@ -1000,7 +955,7 @@ A tuple of handlers to use for uploading. See :doc:`/topics/files` for details.
 FILE_UPLOAD_MAX_MEMORY_SIZE
 ---------------------------
 
-Default: ``2621440`` (i.e. 2.5 MB).
+默认值： ``2621440`` (i.e. 2.5 MB).
 
 The maximum size (in bytes) that an upload will be before it gets streamed to
 the file system. See :doc:`/topics/files` for details.
@@ -1010,7 +965,7 @@ the file system. See :doc:`/topics/files` for details.
 FILE_UPLOAD_PERMISSIONS
 -----------------------
 
-Default: ``None``
+默认值： ``None``
 
 The numeric mode (i.e. ``0644``) to set newly uploaded files to. For
 more information about what these modes mean, see the documentation for
@@ -1036,7 +991,7 @@ system's standard umask.
 FILE_UPLOAD_TEMP_DIR
 --------------------
 
-Default: ``None``
+默认值： ``None``
 
 The directory to store data temporarily while uploading files. If ``None``,
 Django will use the standard temporary directory for the operating system. For
@@ -1051,7 +1006,7 @@ FIRST_DAY_OF_WEEK
 
 .. versionadded:: 1.2
 
-Default: ``0`` (Sunday)
+默认值： ``0`` (Sunday)
 
 Number representing the first day of the week. This is especially useful
 when displaying a calendar. This value is only used when not using
@@ -1066,7 +1021,7 @@ Monday and so on.
 FIXTURE_DIRS
 -------------
 
-Default: ``()`` (Empty tuple)
+默认值： ``()`` (Empty tuple)
 
 List of directories searched for fixture files, in addition to the
 ``fixtures`` directory of each application, in search order.
@@ -1078,7 +1033,7 @@ See :ref:`initial-data-via-fixtures` and :ref:`topics-testing-fixtures`.
 FORCE_SCRIPT_NAME
 ------------------
 
-Default: ``None``
+默认值： ``None``
 
 If not ``None``, this will be used as the value of the ``SCRIPT_NAME``
 environment variable in any HTTP request. This setting can be used to override
@@ -1092,7 +1047,7 @@ FORMAT_MODULE_PATH
 
 .. versionadded:: 1.2
 
-Default: ``None``
+默认值： ``None``
 
 A full Python path to a Python package that contains format definitions for
 project locales. If not ``None``, Django will check for a ``formats.py``
@@ -1124,7 +1079,7 @@ IGNORABLE_404_URLS
 
 .. versionadded:: 1.4
 
-Default: ``()``
+默认值： ``()``
 
 List of compiled regular expression objects describing URLs that should be
 ignored when reporting HTTP 404 errors via email (see
@@ -1140,7 +1095,7 @@ This is only used if :setting:`SEND_BROKEN_LINK_EMAILS` is set to ``True`` and
 INSTALLED_APPS
 --------------
 
-Default: ``()`` (Empty tuple)
+默认值： ``()`` (Empty tuple)
 
 A tuple of strings designating all applications that are enabled in this Django
 installation. Each string should be a full Python path to a Python package that
@@ -1160,7 +1115,7 @@ contains a Django application, as created by :djadmin:`django-admin.py startapp
 INTERNAL_IPS
 ------------
 
-Default: ``()`` (Empty tuple)
+默认值： ``()`` (Empty tuple)
 
 A tuple of IP addresses, as strings, that:
 
@@ -1173,7 +1128,7 @@ A tuple of IP addresses, as strings, that:
 LANGUAGE_CODE
 -------------
 
-Default: ``'en-us'``
+默认值： ``'en-us'``
 
 A string representing the language code for this installation. This should be in
 standard :term:`language format<language code>`. For example, U.S. English is
@@ -1184,7 +1139,7 @@ standard :term:`language format<language code>`. For example, U.S. English is
 LANGUAGE_COOKIE_NAME
 --------------------
 
-Default: ``'django_language'``
+默认值： ``'django_language'``
 
 The name of the cookie to use for the language cookie. This can be whatever
 you want (but should be different from :setting:`SESSION_COOKIE_NAME`). See
@@ -1195,7 +1150,7 @@ you want (but should be different from :setting:`SESSION_COOKIE_NAME`). See
 LANGUAGES
 ---------
 
-Default: A tuple of all available languages. This list is continually growing
+默认值： A tuple of all available languages. This list is continually growing
 and including a copy here would inevitably become rapidly out of date. You can
 see the current list of translated languages by looking in
 ``django/conf/global_settings.py`` (or view the `online source`_).
@@ -1239,7 +1194,7 @@ runtime -- so you'll have to remember to wrap the languages in the *real*
 LOCALE_PATHS
 ------------
 
-Default: ``()`` (Empty tuple)
+默认值： ``()`` (Empty tuple)
 
 A tuple of directories where Django looks for translation files.
 See :ref:`how-django-discovers-translations`.
@@ -1262,7 +1217,7 @@ LOGGING
 
 .. versionadded:: 1.3
 
-Default: A logging configuration dictionary.
+默认值： A logging configuration dictionary.
 
 A data structure containing configuration information. The contents of
 this data structure will be passed as the argument to the
@@ -1278,7 +1233,7 @@ LOGGING_CONFIG
 
 .. versionadded:: 1.3
 
-Default: ``'django.utils.log.dictConfig'``
+默认值： ``'django.utils.log.dictConfig'``
 
 A path to a callable that will be used to configure logging in the
 Django project. Points at a instance of Python's `dictConfig`_
@@ -1294,7 +1249,7 @@ configuration process will be skipped.
 LOGIN_REDIRECT_URL
 ------------------
 
-Default: ``'/accounts/profile/'``
+默认值： ``'/accounts/profile/'``
 
 The URL where requests are redirected after login when the
 ``contrib.auth.login`` view gets no ``next`` parameter.
@@ -1327,7 +1282,7 @@ decorator, for example.
 LOGIN_URL
 ---------
 
-Default: ``'/accounts/login/'``
+默认值： ``'/accounts/login/'``
 
 The URL where requests are redirected for login, especially when using the
 :func:`~django.contrib.auth.decorators.login_required` decorator.
@@ -1340,7 +1295,7 @@ The URL where requests are redirected for login, especially when using the
 LOGOUT_URL
 ----------
 
-Default: ``'/accounts/logout/'``
+默认值： ``'/accounts/logout/'``
 
 LOGIN_URL counterpart.
 
@@ -1352,7 +1307,7 @@ LOGIN_URL counterpart.
 MANAGERS
 --------
 
-Default: ``()`` (Empty tuple)
+默认值： ``()`` (Empty tuple)
 
 A tuple in the same format as :setting:`ADMINS` that specifies who should get
 broken-link notifications when ``SEND_BROKEN_LINK_EMAILS=True``.
@@ -1362,7 +1317,7 @@ broken-link notifications when ``SEND_BROKEN_LINK_EMAILS=True``.
 MEDIA_ROOT
 ----------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 Absolute path to the directory that holds media for this installation, used
 for :doc:`managing stored files </topics/files>`.
@@ -1376,7 +1331,7 @@ See also :setting:`MEDIA_URL`.
 MEDIA_URL
 ---------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 URL that handles the media served from :setting:`MEDIA_ROOT`, used
 for :doc:`managing stored files </topics/files>`.
@@ -1391,7 +1346,7 @@ MESSAGE_LEVEL
 
 .. versionadded:: 1.2
 
-Default: `messages.INFO`
+默认值： `messages.INFO`
 
 Sets the minimum message level that will be recorded by the messages
 framework. See the :doc:`messages documentation </ref/contrib/messages>` for
@@ -1402,7 +1357,7 @@ MESSAGE_STORAGE
 
 .. versionadded:: 1.2
 
-Default: ``'django.contrib.messages.storage.user_messages.LegacyFallbackStorage'``
+默认值： ``'django.contrib.messages.storage.user_messages.LegacyFallbackStorage'``
 
 Controls where Django stores message data.  See the
 :doc:`messages documentation </ref/contrib/messages>` for more details.
@@ -1412,7 +1367,7 @@ MESSAGE_TAGS
 
 .. versionadded:: 1.2
 
-Default::
+默认值：:
 
     {messages.DEBUG: 'debug',
     messages.INFO: 'info',
@@ -1428,7 +1383,7 @@ Sets the mapping of message levels to message tags. See the
 MIDDLEWARE_CLASSES
 ------------------
 
-Default::
+默认值：:
 
     ('django.middleware.common.CommonMiddleware',
      'django.contrib.sessions.middleware.SessionMiddleware',
@@ -1448,7 +1403,7 @@ A tuple of middleware classes to use. See :doc:`/topics/http/middleware`.
 MONTH_DAY_FORMAT
 ----------------
 
-Default: ``'F j'``
+默认值： ``'F j'``
 
 The default formatting to use for date fields on Django admin change-list
 pages -- and, possibly, by other parts of the system -- in cases when only the
@@ -1470,7 +1425,7 @@ NUMBER_GROUPING
 
 .. versionadded:: 1.2
 
-Default: ``0``
+默认值： ``0``
 
 Number of digits grouped together on the integer part of a number.
 
@@ -1490,7 +1445,7 @@ See also :setting:`DECIMAL_SEPARATOR`, :setting:`THOUSAND_SEPARATOR` and
 PASSWORD_RESET_TIMEOUT_DAYS
 ---------------------------
 
-Default: ``3``
+默认值： ``3``
 
 The number of days a password reset link is valid for. Used by the
 :mod:`django.contrib.auth` password reset mechanism.
@@ -1500,7 +1455,7 @@ The number of days a password reset link is valid for. Used by the
 PREPEND_WWW
 -----------
 
-Default: ``False``
+默认值： ``False``
 
 Whether to prepend the "www." subdomain to URLs that don't have it. This is only
 used if :class:`~django.middleware.common.CommonMiddleware` is installed
@@ -1511,7 +1466,7 @@ used if :class:`~django.middleware.common.CommonMiddleware` is installed
 PROFANITIES_LIST
 ----------------
 
-Default: ``()`` (Empty tuple)
+默认值： ``()`` (Empty tuple)
 
 A tuple of profanities, as strings, that will be forbidden in comments when
 :setting:`COMMENTS_ALLOW_PROFANITIES` is ``False``.
@@ -1521,7 +1476,7 @@ A tuple of profanities, as strings, that will be forbidden in comments when
 RESTRUCTUREDTEXT_FILTER_SETTINGS
 --------------------------------
 
-Default: ``{}``
+默认值： ``{}``
 
 A dictionary containing settings for the ``restructuredtext`` markup filter from
 the :doc:`django.contrib.markup application </ref/contrib/markup>`. They override
@@ -1535,7 +1490,7 @@ docs`_ for details.
 ROOT_URLCONF
 ------------
 
-Default: Not defined
+默认值： Not defined
 
 A string representing the full Python import path to your root URLconf. For example:
 ``"mydjangoapps.urls"``. Can be overridden on a per-request basis by
@@ -1547,7 +1502,7 @@ object. See :ref:`how-django-processes-a-request` for details.
 SECRET_KEY
 ----------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 A secret key for this particular Django installation. Used to provide a seed in
 secret-key hashing algorithms. Set this to a random string -- the longer, the
@@ -1560,7 +1515,7 @@ SECURE_PROXY_SSL_HEADER
 
 .. versionadded:: 1.4
 
-Default: ``None``
+默认值： ``None``
 
 A tuple representing a HTTP header/value combination that signifies a request
 is secure. This controls the behavior of the request object's ``is_secure()``
@@ -1618,7 +1573,7 @@ available in ``request.META``.)
 SEND_BROKEN_LINK_EMAILS
 -----------------------
 
-Default: ``False``
+默认值： ``False``
 
 Whether to send an email to the :setting:`MANAGERS` each time somebody visits
 a Django-powered page that is 404ed with a non-empty referer (i.e., a broken
@@ -1631,7 +1586,7 @@ link). This is only used if ``CommonMiddleware`` is installed (see
 SERIALIZATION_MODULES
 ---------------------
 
-Default: Not defined.
+默认值： Not defined.
 
 A dictionary of modules containing serializer definitions (provided as
 strings), keyed by a string identifier for that serialization type. For
@@ -1644,7 +1599,7 @@ example, to define a YAML serializer, use::
 SERVER_EMAIL
 ------------
 
-Default: ``'root@localhost'``
+默认值： ``'root@localhost'``
 
 The email address that error messages come from, such as those sent to
 :setting:`ADMINS` and :setting:`MANAGERS`.
@@ -1654,7 +1609,7 @@ The email address that error messages come from, such as those sent to
 SESSION_COOKIE_AGE
 ------------------
 
-Default: ``1209600`` (2 weeks, in seconds)
+默认值： ``1209600`` (2 weeks, in seconds)
 
 The age of session cookies, in seconds. See :doc:`/topics/http/sessions`.
 
@@ -1663,7 +1618,7 @@ The age of session cookies, in seconds. See :doc:`/topics/http/sessions`.
 SESSION_COOKIE_DOMAIN
 ---------------------
 
-Default: ``None``
+默认值： ``None``
 
 The domain to use for session cookies. Set this to a string such as
 ``".lawrence.com"`` for cross-domain cookies, or use ``None`` for a standard
@@ -1674,7 +1629,7 @@ domain cookie. See the :doc:`/topics/http/sessions`.
 SESSION_COOKIE_HTTPONLY
 -----------------------
 
-Default: ``False``
+默认值： ``False``
 
 Whether to use HTTPOnly flag on the session cookie. If this is set to
 ``True``, client-side JavaScript will not to be able to access the
@@ -1693,7 +1648,7 @@ protected cookie data.
 SESSION_COOKIE_NAME
 -------------------
 
-Default: ``'sessionid'``
+默认值： ``'sessionid'``
 
 The name of the cookie to use for sessions. This can be whatever you want (but
 should be different from :setting:`LANGUAGE_COOKIE_NAME`).
@@ -1704,7 +1659,7 @@ See the :doc:`/topics/http/sessions`.
 SESSION_COOKIE_PATH
 -------------------
 
-Default: ``'/'``
+默认值： ``'/'``
 
 The path set on the session cookie. This should either match the URL path of your
 Django installation or be parent of that path.
@@ -1718,7 +1673,7 @@ its own session cookie.
 SESSION_COOKIE_SECURE
 ---------------------
 
-Default: ``False``
+默认值： ``False``
 
 Whether to use a secure cookie for the session cookie. If this is set to
 ``True``, the cookie will be marked as "secure," which means browsers may
@@ -1730,7 +1685,7 @@ See the :doc:`/topics/http/sessions`.
 SESSION_ENGINE
 --------------
 
-Default: ``django.contrib.sessions.backends.db``
+默认值： ``django.contrib.sessions.backends.db``
 
 Controls where Django stores session data. Valid values are:
 
@@ -1747,7 +1702,7 @@ See :doc:`/topics/http/sessions`.
 SESSION_EXPIRE_AT_BROWSER_CLOSE
 -------------------------------
 
-Default: ``False``
+默认值： ``False``
 
 Whether to expire the session when the user closes his or her browser.
 See the :doc:`/topics/http/sessions`.
@@ -1757,7 +1712,7 @@ See the :doc:`/topics/http/sessions`.
 SESSION_FILE_PATH
 -----------------
 
-Default: ``None``
+默认值： ``None``
 
 If you're using file-based session storage, this sets the directory in
 which Django will store session data. See :doc:`/topics/http/sessions`. When
@@ -1769,7 +1724,7 @@ directory for the system.
 SESSION_SAVE_EVERY_REQUEST
 --------------------------
 
-Default: ``False``
+默认值： ``False``
 
 Whether to save the session data on every request. See
 :doc:`/topics/http/sessions`.
@@ -1781,7 +1736,7 @@ SHORT_DATE_FORMAT
 
 .. versionadded:: 1.2
 
-Default: ``m/d/Y`` (e.g. ``12/31/2003``)
+默认值： ``m/d/Y`` (e.g. ``12/31/2003``)
 
 An available formatting that can be used for displaying date fields on
 templates. Note that if :setting:`USE_L10N` is set to ``True``, then the
@@ -1797,7 +1752,7 @@ SHORT_DATETIME_FORMAT
 
 .. versionadded:: 1.2
 
-Default: ``m/d/Y P`` (e.g. ``12/31/2003 4 p.m.``)
+默认值： ``m/d/Y P`` (e.g. ``12/31/2003 4 p.m.``)
 
 An available formatting that can be used for displaying datetime fields on
 templates. Note that if :setting:`USE_L10N` is set to ``True``, then the
@@ -1813,7 +1768,7 @@ SIGNING_BACKEND
 
 .. versionadded:: 1.4
 
-Default: 'django.core.signing.TimestampSigner'
+默认值： 'django.core.signing.TimestampSigner'
 
 The backend used for signing cookies and other data.
 
@@ -1824,7 +1779,7 @@ See also the :doc:`/topics/signing` documentation.
 SITE_ID
 -------
 
-Default: Not defined
+默认值： Not defined
 
 The ID, as an integer, of the current site in the ``django_site`` database
 table. This is used so that application data can hook into specific site(s)
@@ -1839,7 +1794,7 @@ See :doc:`/ref/contrib/sites`.
 STATIC_ROOT
 -----------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 The absolute path to the directory where :djadmin:`collectstatic` will collect
 static files for deployment.
@@ -1870,7 +1825,7 @@ See :doc:`staticfiles reference</ref/contrib/staticfiles>` and
 STATIC_URL
 ----------
 
-Default: ``None``
+默认值： ``None``
 
 URL to use when referring to static files located in :setting:`STATIC_ROOT`.
 
@@ -1889,7 +1844,7 @@ See :setting:`STATIC_ROOT`.
 TEMPLATE_CONTEXT_PROCESSORS
 ---------------------------
 
-Default::
+默认值：:
 
     ("django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
@@ -1926,7 +1881,7 @@ of items to be merged into the context.
 TEMPLATE_DEBUG
 --------------
 
-Default: ``False``
+默认值： ``False``
 
 A boolean that turns on/off template debug mode. If this is ``True``, the fancy
 error page will display a detailed report for any exception raised during
@@ -1943,7 +1898,7 @@ See also :setting:`DEBUG`.
 TEMPLATE_DIRS
 -------------
 
-Default: ``()`` (Empty tuple)
+默认值： ``()`` (Empty tuple)
 
 List of locations of the template source files searched by
 :class:`django.template.loaders.filesystem.Loader`, in search order.
@@ -1957,7 +1912,7 @@ See :doc:`/topics/templates`.
 TEMPLATE_LOADERS
 ----------------
 
-Default::
+默认值：:
 
      ('django.template.loaders.filesystem.Loader',
       'django.template.loaders.app_directories.Loader')
@@ -1979,7 +1934,7 @@ module, subsequent items are passed to the ``Loader`` during initialization. See
 TEMPLATE_STRING_IF_INVALID
 --------------------------
 
-Default: ``''`` (Empty string)
+默认值： ``''`` (Empty string)
 
 Output, as a string, that the template system should use for invalid (e.g.
 misspelled) variables. See :ref:`invalid-template-variables`..
@@ -1989,7 +1944,7 @@ misspelled) variables. See :ref:`invalid-template-variables`..
 TEST_RUNNER
 -----------
 
-Default: ``'django.test.simple.DjangoTestSuiteRunner'``
+默认值： ``'django.test.simple.DjangoTestSuiteRunner'``
 
 .. versionchanged:: 1.2
    Prior to 1.2, test runners were a function, not a class.
@@ -2006,7 +1961,7 @@ THOUSAND_SEPARATOR
 
 .. versionadded:: 1.2
 
-Default: ``,`` (Comma)
+默认值： ``,`` (Comma)
 
 Default thousand separator used when formatting numbers. This setting is
 used only when :setting:`USE_THOUSAND_SEPARATOR` is ``True`` and
@@ -2023,7 +1978,7 @@ See also :setting:`NUMBER_GROUPING`, :setting:`DECIMAL_SEPARATOR` and
 TIME_FORMAT
 -----------
 
-Default: ``'P'`` (e.g. ``4 p.m.``)
+默认值： ``'P'`` (e.g. ``4 p.m.``)
 
 The default formatting to use for displaying time fields in any part of the
 system. Note that if :setting:`USE_L10N` is set to ``True``, then the
@@ -2042,7 +1997,7 @@ TIME_INPUT_FORMATS
 
 .. versionadded:: 1.2
 
-Default: ``('%H:%M:%S', '%H:%M')``
+默认值： ``('%H:%M:%S', '%H:%M')``
 
 A tuple of formats that will be accepted when inputting data on a time field.
 Formats will be tried in order, using the first valid one. Note that these
@@ -2061,7 +2016,7 @@ See also :setting:`DATE_INPUT_FORMATS` and :setting:`DATETIME_INPUT_FORMATS`.
 TIME_ZONE
 ---------
 
-Default: ``'America/Chicago'``
+默认值： ``'America/Chicago'``
 
 .. versionchanged:: 1.2
    ``None`` was added as an allowed value.
@@ -2114,7 +2069,7 @@ to ensure your processes are running in the correct environment.
 URL_VALIDATOR_USER_AGENT
 ------------------------
 
-Default: ``Django/<version> (https://www.djangoproject.com/)``
+默认值： ``Django/<version> (https://www.djangoproject.com/)``
 
 The string to use as the ``User-Agent`` header when checking to see if
 URLs exist (see the ``verify_exists`` option on
@@ -2126,7 +2081,7 @@ URLs exist (see the ``verify_exists`` option on
 USE_ETAGS
 ---------
 
-Default: ``False``
+默认值： ``False``
 
 A boolean that specifies whether to output the "Etag" header. This saves
 bandwidth but slows down performance. This is used by the ``CommonMiddleware``
@@ -2138,7 +2093,7 @@ bandwidth but slows down performance. This is used by the ``CommonMiddleware``
 USE_I18N
 --------
 
-Default: ``True``
+默认值： ``True``
 
 A boolean that specifies whether Django's translation system should be enabled.
 This provides an easy way to turn it off, for performance. If this is set to
@@ -2154,7 +2109,7 @@ USE_L10N
 
 .. versionadded:: 1.2
 
-Default: ``False``
+默认值： ``False``
 
 A boolean that specifies if localized formatting of data will be enabled by
 default or not. If this is set to ``True``, e.g. Django will display numbers and
@@ -2174,7 +2129,7 @@ USE_THOUSAND_SEPARATOR
 
 .. versionadded:: 1.2
 
-Default: ``False``
+默认值： ``False``
 
 A boolean that specifies whether to display numbers using a thousand separator.
 When :setting:`USE_L10N` is set to ``True`` and if this is also set to
@@ -2191,7 +2146,7 @@ USE_TZ
 
 .. versionadded:: 1.4
 
-Default: ``False``
+默认值： ``False``
 
 A boolean that specifies if datetimes will be timezone-aware by default or not.
 If this is set to ``True``, Django will use timezone-aware datetimes internally.
@@ -2212,7 +2167,7 @@ USE_X_FORWARDED_HOST
 
 .. versionadded:: 1.3.1
 
-Default: ``False``
+默认值： ``False``
 
 A boolean that specifies whether to use the X-Forwarded-Host header in
 preference to the Host header. This should only be enabled if a proxy
@@ -2225,7 +2180,7 @@ WSGI_APPLICATION
 
 .. versionadded:: 1.4
 
-Default: ``None``
+默认值： ``None``
 
 The full Python path of the WSGI application object that Django's built-in
 servers (e.g. :djadmin:`runserver`) will use. The :djadmin:`django-admin.py
@@ -2242,7 +2197,7 @@ identical to previous Django versions.
 YEAR_MONTH_FORMAT
 -----------------
 
-Default: ``'F Y'``
+默认值： ``'F Y'``
 
 The default formatting to use for date fields on Django admin change-list
 pages -- and, possibly, by other parts of the system -- in cases when only the
@@ -2262,7 +2217,7 @@ and :setting:`MONTH_DAY_FORMAT`.
 X_FRAME_OPTIONS
 ---------------
 
-Default: ``'SAMEORIGIN'``
+默认值： ``'SAMEORIGIN'``
 
 The default value for the X-Frame-Options header used by
 :class:`~django.middleware.clickjacking.XFrameOptionsMiddleware`. See the
