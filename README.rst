@@ -20,6 +20,19 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
 翻译进度
 ========
 
+已完成和正在进行中的文档::
+
+  * [ 100%] [       3378]  ./intro/install.txt  
+  * [ 100%] [       9919]  ./ref/models/options.txt
+  * [  50%] [      66276]  ./ref/settings.txt
+  * [ 100%] [      24519]  ./topics/email.txt
+  * [ 100%] [       2871]  ./topics/i18n/index.txt
+  * [ 100%] [       8127]  ./topics/settings.txt
+
+
+未完成的文档
+------------
+
 * [   0%] [        678]  ./contents.txt
 * [   0%] [       5808]  ./faq/admin.txt
 * [   0%] [       5555]  ./faq/contributing.txt
@@ -70,7 +83,6 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
 * [   0%] [       9050]  ./internals/release-process.txt
 * [   0%] [      10303]  ./internals/svn.txt
 * [   0%] [       1313]  ./intro/index.txt
-* [ 100%] [       3378]  ./intro/install.txt
 * [   0%] [      11967]  ./intro/overview.txt
 * [   0%] [      28834]  ./intro/tutorial01.txt
 * [   0%] [      19098]  ./intro/tutorial02.txt
@@ -153,11 +165,9 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
 * [   0%] [      42115]  ./ref/models/fields.txt
 * [   0%] [        191]  ./ref/models/index.txt
 * [   0%] [      24176]  ./ref/models/instances.txt
-* [ 100%] [       9919]  ./ref/models/options.txt
 * [   0%] [      79666]  ./ref/models/querysets.txt
 * [   0%] [       3688]  ./ref/models/relations.txt
 * [   0%] [      28395]  ./ref/request-response.txt
-* [  50%] [      66276]  ./ref/settings.txt
 * [   0%] [      15586]  ./ref/signals.txt
 * [   0%] [      10915]  ./ref/template-response.txt
 * [   0%] [      34074]  ./ref/templates/api.txt
@@ -220,7 +230,6 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
 * [   0%] [      11418]  ./topics/db/sql.txt
 * [   0%] [       2755]  ./topics/db/tablespaces.txt
 * [   0%] [      14353]  ./topics/db/transactions.txt
-* [ 100%] [      24519]  ./topics/email.txt
 * [   0%] [       5510]  ./topics/files.txt
 * [   0%] [      22271]  ./topics/forms/formsets.txt
 * [   0%] [      15249]  ./topics/forms/index.txt
@@ -238,7 +247,6 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
 * [   0%] [      38520]  ./topics/http/urls.txt
 * [   0%] [       8856]  ./topics/http/views.txt
 * [   0%] [       5838]  ./topics/i18n/formatting.txt
-* [ 100%] [       2871]  ./topics/i18n/index.txt
 * [   0%] [      26850]  ./topics/i18n/timezones.txt
 * [   0%] [      60790]  ./topics/i18n/translation.txt
 * [   0%] [        505]  ./topics/index.txt
@@ -247,7 +255,6 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
 * [   0%] [       8852]  ./topics/pagination.txt
 * [   0%] [       8742]  ./topics/security.txt
 * [   0%] [      15867]  ./topics/serialization.txt
-* [ 100%] [       8127]  ./topics/settings.txt
 * [   0%] [       9676]  ./topics/signals.txt
 * [   0%] [       5348]  ./topics/signing.txt
 * [   0%] [      23597]  ./topics/templates.txt
