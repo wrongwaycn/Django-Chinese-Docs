@@ -28,6 +28,7 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
   [ 100%] [      24519]  ./topics/email.txt
   [ 100%] [       2871]  ./topics/i18n/index.txt
   [ 100%] [       8127]  ./topics/settings.txt
+  [  30%] [      50383]  ./topics/db/models.txt
 
 
 未完成的文档::
@@ -222,7 +223,6 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
   [   0%] [       4154]  ./topics/db/examples/one_to_one.txt
   [   0%] [        425]  ./topics/db/index.txt
   [   0%] [      16414]  ./topics/db/managers.txt
-  [   0%] [      50383]  ./topics/db/models.txt
   [   0%] [      23259]  ./topics/db/multi-db.txt
   [   0%] [      11287]  ./topics/db/optimization.txt
   [   0%] [      50471]  ./topics/db/queries.txt
