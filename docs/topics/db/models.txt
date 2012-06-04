@@ -1,26 +1,25 @@
-============
-模型(Models)
-============
+==============
+ 模型(Models)
+==============
 
 .. module:: django.db.models
 
-在Django应用当中，model 是唯一的数据来源。它包含必需的字段和用以保存数据的行为。通常情况下，一个 model 映射一个数据表。
+在 Django 应用当中， model 是唯一的数据来源。它包含必需的字段和用以保存数据的行为。通常情况
+下，一个 model 映射一个数据表。
 
 基础:
 
-* 每个 model 都是一个继承自
-  :class:`django.db.models.Model` 类的子类
+* 每个 model 都是一个继承自 :class:`django.db.models.Model` 类的子类。
 
 * model 的每个属性都表示数据库中的一个字段。
 
-* Django 会提供一套自动生成的用于数据库访问的API；详见
-  :doc:`/topics/db/queries`.
+* Django 会提供一套自动生成的用于数据库访问的API；详见 :doc:`/topics/db/queries` 。
 
 
 入门例子
 ========
 
-这个例子定义了一个  ``Person`` model，它有 ``first_name`` 和 ``last_name`` 两个属性::
+这个例子定义了一个 ``Person`` model，它有 ``first_name`` 和 ``last_name`` 两个属性 ::
 
     from django.db import models
 
@@ -28,9 +27,10 @@
         first_name = models.CharField(max_length=30)
         last_name = models.CharField(max_length=30)
 
-``first_name`` 和 ``last_name`` 是model的 fields_ 。 每个字段都被指定成一个类属性，每个属性都映射一个数据库的列。
+``first_name`` 和 ``last_name`` 是model的 字段-Fields_ 。 每个字段都被指定成一个类属性，每个属性
+都映射一个数据库的列。
 
-上面的 ``Person`` model 会在数据库中创建这样一张表::
+上面的 ``Person`` model 会在数据库中创建这样一张表:
 
 .. code-block:: sql
 
@@ -42,22 +42,24 @@
 
 一些技术上的注意事项:
 
-* 这个表的名称 ``myapp_person`` ，是根据 model 中的元数据自动生成的，也可以覆写为别的名称，详见
-  :ref:`table-names` 
+* 这个表的名称 ``myapp_person`` ，是根据 model 中的元数据自动生成的，也可以覆写为别的名称，
+  详见 :ref:`table-names`
 
-* ``id`` 字段是自动添加的，但这个行为可以被重写。详见 :ref:`automatic-primary-key-fields` 。
+* ``id`` 字段是自动添加的，但这个行为可以被重写。详见 :ref:`automatic-primary-key-fields`
+  。
 
-* 这个例子使用 PostgreSQL 语法格式化 ``CREATE TABLE`` SQL 语句，要注意的是Django是根据
-   :doc:`settings file </topics/settings>` 配置中指定的数据库类型来生成相应的 SQL 语句。
+* 这个例子使用 PostgreSQL 语法格式化 ``CREATE TABLE`` SQL 语句，要注意的是 Django 是根据
+  :doc:`settings file </topics/settings>` 配置中指定的数据库类型来生成相应的 SQL 语句。
 
 使用模型(models)
 ================
 
-一旦你定义了 model ，就要通知 Django *启用* 这些 model ，你要做的就是：修改配置文件中的 :setting:`INSTALLED_APPS` 设置，
-在其中添加 ``models.py`` 所在应用的名称。
+一旦你定义了 model ，就要通知 Django *启用* 这些 model ，你要做的就是修改配置文件中的
+:setting:`INSTALLED_APPS` 设置，在其中添加 ``models.py`` 所在应用的名称。
 
-例如，假设你的 model 定义在 ``mysite.myapp.models``  中 ( mysite 这个包是由 :djadmin:`manage.py startapp <startapp>` 脚本创建的)，
-那么 :setting:`INSTALLED_APPS` 就应该包含下面内容::
+例如，假设你的 model 定义在 ``mysite.myapp.models`` 中 ( mysite 这个包是由
+:djadmin:`manage.py startapp <startapp>` 脚本创建的)，那么 :setting:`INSTALLED_APPS` 就应该
+包含下面内容::
 
     INSTALLED_APPS = (
         #...
@@ -65,14 +67,14 @@
         #...
     )
 
-在  :setting:`INSTALLED_APPS` 中添加新应用(app)后，要运行 :djadmin:`manage.py syncdb <syncdb>` 同步数据库。
+在 :setting:`INSTALLED_APPS` 中添加新应用(app)后，要运行 :djadmin:`manage.py syncdb
+<syncdb>` 同步数据库。
 
+字段-Fields
+===========
 
-字段(Fields)
-============
-
-model 中不可或缺且最为重要的，就是一系列的字段(fields)，它是一组数据库字段的列表。字段由类属性指定。
-
+model 中不可或缺且最为重要的，就是一系列的字段(fields)，它是一组数据库字段的列表。字段由类
+属性指定。
 
 例如::
 
@@ -91,26 +93,31 @@ model 中不可或缺且最为重要的，就是一系列的字段(fields)，它
 字段类型(Field types)
 ---------------------
 
-model 中的每个字段都是 :class:`~django.db.models.Field`  子类的某个实例。Django 根据字段类的类型确定以下内容：
+model 中的每个字段都是 :class:`~django.db.models.Field` 子类的某个实例。Django 根据字段类的
+类型确定以下内容：
 
 * 数据库当中的列类型 (比如 ``INTEGER``, ``VARCHAR``)。
 
-* Django 的用户管理界面所使用的部件( :doc:`widget </ref/forms/widgets>` )。当然，前提是你启用了 Django 的管理后台并使用了某些部件 (例如，``<input type="text">``, ``<select>`` ）。
+* Django 的用户管理界面所使用的部件( :doc:`widget </ref/forms/widgets>` )。当然，前提是你启
+  用了 Django 的管理后台并使用了某些部件 (例如， ``<input type="text">`` ， ``<select>`` ）。
 
 * 最低限度的验证需求。它被用在 Django 管理后台和自动生成的表单中。
 
-Django 自带数十种内置的字段类型；详见 :ref:`model 字段参考 <model-field-types>` 
-如果内置类型仍不能满足你的要求，你可以自由地编写符合你要求的字段类型；详见 :doc:`/howto/custom-model-fields`.
+Django 自带数十种内置的字段类型；详见 :ref:`model 字段参考 <model-field-types>` 如果内置类
+型仍不能满足你的要求，你可以自由地编写符合你要求的字段类型；详见
+:doc:`/howto/custom-model-fields` 。
 
 
 字段选项(Field options)
 -----------------------
 
-每个字段都有一些特有的参数，详见 :ref:`model 字段参数 <model-field-types>` 。
-例如， :class:`~django.db.models.CharField` (还有它的派生类) 都需要 :attr:`~django.db.models.CharField.max_length` 
-参数来指定存储数据的 ``VARCHAR`` 数据库字段的大小。
+每个字段都有一些特有的参数，详见 :ref:`model 字段参数 <model-field-types>` 。例如，
+:class:`~django.db.models.CharField` (还有它的派生类) 都需要
+:attr:`~django.db.models.CharField.max_length` 参数来指定存储数据的 ``VARCHAR`` 数据库字段
+的大小。
 
-还有一些适用于所有字段的通用的可选参数，这些参数在 :ref:`参考 <common-model-field-options>` 中有详细定义，这里我们只简单介绍一些最常用的：
+还有一些适用于所有字段的通用的可选参数，这些参数在 :ref:`参考
+<common-model-field-options>` 中有详细定义，这里我们只简单介绍一些最常用的：
 
 :attr:`~Field.null`
     如果为 ``True`` ， Django 在数据库中会将空值(empty)存储为 ``NULL`` 。默认为 ``False`` 。
@@ -118,12 +125,15 @@ Django 自带数十种内置的字段类型；详见 :ref:`model 字段参考 <m
 :attr:`~Field.blank`
     如果为 ``True`` ，该字段允许不填(blank)。默认为 ``False`` 。
 
-    要注意，这与  :attr:`~Field.null` 不同。  :attr:`~Field.null` 纯粹是数据库范畴的，
-    而 :attr:`~Field.blank` 是数据验证范畴的。如果一个字段的 :attr:`blank=True <Field.blank>` ，
-    Django 的管理后台在做数据验证时，会允许该字段是空值。如果字段的  :attr:`blank=False <Field.blank>` ，该字段就是必填的。
+    要注意，这与 :attr:`~Field.null` 不同。  :attr:`~Field.null` 纯粹是数据库范畴的，而
+    :attr:`~Field.blank` 是数据验证范畴的。如果一个字段的 :attr:`blank=True <Field.blank>`
+    ，Django 的管理后台在做数据验证时，会允许该字段是空值。如果字段的 :attr:`blank=False
+    <Field.blank>` ，该字段就是必填的。
 
 :attr:`~Field.choices`
-    它是一个可迭代的二元组(例如，列表或是元组)，用来给字段提供选择项。如果设置了 choices ，Django 的管理后台就会显示选择框，而不是标准的文本框，而且这个选择框的选项就是 choices 中的元组。
+    它是一个可迭代的二元组(例如，列表或是元组)，用来给字段提供选择项。如果设置了 choices ，
+    Django 的管理后台就会显示选择框，而不是标准的文本框，而且这个选择框的选项就是 choices
+    中的元组。
 
     这是一个关于 choices 列表的例子::
 
@@ -135,7 +145,10 @@ Django 自带数十种内置的字段类型；详见 :ref:`model 字段参考 <m
             (u'GR', u'Graduate'),
         )
 
-    每个元组中的第一个元素，是存储在数据库中的值；第二个元素是在管理界面或 ModelChoiceField 中用作显示的内容。在一个给定的 model 类的实例中，想得到某个 choices 字段的显示值，就调用 ``get_FOO_display`` 方法(这里的 FOO 就是 choices 字段的名称 )。
+    每个元组中的第一个元素，是存储在数据库中的值；第二个元素是在管理界面或
+    ModelChoiceField 中用作显示的内容。在一个给定的 model 类的实例中，想得到某个 choices 字
+    段的显示值，就调用 ``get_FOO_display`` 方法(这里的 FOO 就是 choices 字段的名称 )。
+
     例如::
 
         from django.db import models
@@ -158,24 +171,26 @@ Django 自带数十种内置的字段类型；详见 :ref:`model 字段参考 <m
         u'Male'
 
 :attr:`~Field.default`
-    字段的默认值。它可以是一个值，也可以是一个可调用的对象(这里称之为对象C)。若是后者，那么每次创建一个新对象时，对象C都将被调用。
+    字段的默认值。它可以是一个值，也可以是一个可调用的对象(这里称之为对象C)。若是后者，那么
+    每次创建一个新对象时，对象C都将被调用。
 
 :attr:`~Field.help_text`
-    附加的帮助信息。在管理后台编辑该对象的表单中，它显示在字段下面。即使你的对象无须在后台进行管理，它对于文档化也是很有用的。
+    附加的帮助信息。在管理后台编辑该对象的表单中，它显示在字段下面。即使你的对象无须在后台
+    进行管理，它对于文档化也是很有用的。
 
 :attr:`~Field.primary_key`
     如果为 ``True`` ，那么这个字段就是 model 的主键。
 
-    如果你没有指定任何一个字段的  :attr:`primary_key=True <Field.primary_key>` ，
-    Django 就会自动添加一个 :class:`IntegerField` 字段做为主键。所以除非你想重写默认的主键方法，
-    否则没必要在任何字段上设置 :attr:`primary_key=True <Field.primary_key>` 。详见  :ref:`automatic-primary-key-fields` 。
+    如果你没有指定任何一个字段的 :attr:`primary_key=True <Field.primary_key>` ，Django 就会
+    自动添加一个 :class:`IntegerField` 字段做为主键。所以除非你想重写默认的主键方法，否则没
+    必要在任何字段上设置 :attr:`primary_key=True <Field.primary_key>` 。详见
+    :ref:`automatic-primary-key-fields` 。
 
 :attr:`~Field.unique`
     如果为 ``True`` ，那么字段值就必须是全表唯一的。
 
-再说一次，这些仅仅是常用字段的简短介绍，要了解详细内容，请查看
-:ref:`通用model字段选项参考 
-<common-model-field-options>`.
+再说一次，这些仅仅是常用字段的简短介绍，要了解详细内容，请查看 :ref:`通用model字段选项参考
+<common-model-field-options>` 。
 
 .. _automatic-primary-key-fields:
 
@@ -188,18 +203,17 @@ Django 自带数十种内置的字段类型；详见 :ref:`model 字段参考 <m
 
 这是一个自增主键字段。
 
-如果你想指定一个自定义主键字段，只要在某个字段上指定 :attr:`primary_key=True <Field.primary_key>`  即可。
-如果 Django 看到你显式地设置了 Field.primary_key，就不会自动添加 id 列。
+如果你想指定一个自定义主键字段，只要在某个字段上指定 :attr:`primary_key=True
+<Field.primary_key>` 即可。如果 Django 看到你显式地设置了 Field.primary_key，就不会自动添加
+id 列。
 
 每个 model 只要有一个字段指定 primary_key=True 就可以了。
 
-If you'd like to specify a custom primary key, just specify
-:attr:`primary_key=True <Field.primary_key>` on one of your fields. If Django
-sees you've explicitly set :attr:`Field.primary_key`, it won't add the automatic
-``id`` column.
+如果你想要自定义一个主键，只需要在你的字段中设置 :attr:`primary_key=True
+<Field.primary_key>` 。如果 Django 发现你指明了 :attr:`Field.primary_key` ， 它就不会自动增
+加 ``id`` 字段。
 
-Each model requires exactly one field to have :attr:`primary_key=True
-<Field.primary_key>`.
+每个 model 需要且仅仅需要一个字段拥有 :attr:`primary_key=True <Field.primary_key>` 。
 
 .. _verbose-field-names:
 
