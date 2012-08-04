@@ -1,0 +1,361 @@
+=====================================
+编写你的第一个 Django 程序，第2节
+=====================================
+
+接着:doc:`教程 1 </intro/tutorial01>` 继续。本节我们将继续完善Web-poll，重点在于Django自动生成的网站管理功能。
+
+.. admonition:: 哲理
+
+    添加，修改，删除内容是一件非常乏味，而且不需要任何创造性的工作。正是出于这样的原因，Django才采用完全自动化的方式创建模型的管理界面。
+
+    Django是在新闻编辑室的环境下产生的，在这里内容出版商与公共网站之间存在非常明显的差异。网站管理员使用这套系统发布新闻故事，事件，体育成绩等等，这些内容都是在公共的网站上展现的。Django通过为管理员提供统一界面来编辑新闻内容，从而解决了这一问题。
+
+    Django自动生成的管理界面不对访问者开放，是专门给网站管理员使用的。
+
+启用网站管理功能
+=======================
+
+Django内置的网站管理功能默认是不开启的，这是个可选项。开启这项功能需要完成如下3步：
+
+
+  * 取消 :setting:`INSTALLED_APPS` 配置中 ``"django.contrib.admin"`` 的注释
+
+  * 运行``python manage.py syncdb``命令. 因为在:setting:`INSTALLED_APPS`中添加了新的应用,所以需要运行这个命令来更新数据库表.
+
+  * 取消 ``mysite/urls.py`` 文件中与admin相关联的3行. 这是一个URLconf文件,在下一节教程中会深入讲解.现在你只需知道它是URL与应用间的映射.编辑过后的 ``urls.py`` 文件会像下面这样:
+
+  .. parsed-literal::
+
+      from django.conf.urls import patterns, include, url
+
+      # Uncomment the next two lines to enable the admin:
+      **from django.contrib import admin**
+      **admin.autodiscover()**
+
+      urlpatterns = patterns('',
+          # Examples:
+          # url(r'^$', '{{ project_name }}.views.home', name='home'),
+          # url(r'^{{ project_name }}/', include('{{ project_name }}.foo.urls')),
+
+          # Uncomment the admin/doc line below to enable admin documentation:
+          # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+
+          # Uncomment the next line to enable the admin:
+          **url(r'^admin/', include(admin.site.urls)),**
+      )
+
+  (The bold lines are the ones that needed to be uncommented.)
+
+  (加粗的那3行是需要取消注释的.)
+
+启动服务器
+============================
+
+下面我们要启动服务器然后访问管理页面
+
+回想教程1中是这样启动服务器的:
+
+.. code-block:: bash
+
+    python manage.py runserver
+
+然后在本地域名后面增加"/admin/"，比如，http://127.0.0.1:8000/admin/。这样就能看到管理员登录界面：
+.. image:: _images/admin01.png
+   :alt: Django管理员登录界面
+
+.. admonition:: Doesn't match what you see?
+.. admonition:: 与你所见一样吗？
+
+    If at this point, instead of the above login page, you get an error
+    page reporting something like::
+
+    如果呈现在你面前和上图中的登陆页面不同，并且抛出如下的错误::
+
+        ImportError at /admin/
+        cannot import name patterns
+        ...
+
+    可能是因为使用了与教程中不同的Django版本造成的。因此你可以选择老版本的教程或者选择新版本的Django。
+
+进入管理系统
+====================
+
+现在登录到管理系统吧，记得在教程1中我们创建了一个超级用户吗？如果你没有创建或者忘记了密码，可以:ref:`再创建一个用户<topics-auth-creating-superusers>`。登录成功就可以看见Django内置的管理系统的主页：
+
+.. image:: _images/admin02t.png
+   :alt: Django admin index page
+
+如上图中所示，有些内容是可以编辑的，有工作组，用户以及站点。这些就是Django默认内置的核心功能。
+
+Make the poll app modifiable in the admin
+让管理员可以修改poll应用
+=========================================
+
+我们的poll应用在哪里？主页面没有显示啊！
+
+还需要一道工序：需要告知系统 ``Poll`` 对象需要管理界面。为了完成此工序，还需要在 ``polls`` 目录下创建``admin.py`` 文件，文件内容如下::
+
+    from polls.models import Poll
+    from django.contrib import admin
+
+    admin.site.register(Poll)
+
+重启服务器后就能看见变化。通常每次修改文件后，服务器会自动重新载入，但是创建文件不会触发自动载入。
+
+内置功能
+====================================
+
+ ``Poll`` 已经在Django中注册，这样Django就知道需要把它也显示在主页面：
+
+.. image:: _images/admin03t.png
+   :alt: Django admin index page, now with polls displayed
+
+点击"Polls"进入poll修改列表页面，本页展现数据库中的所有记录，并且可以对其进行修改。这里面也有我们教程1中创建的"What's up?"：
+
+.. image:: _images/admin04t.png
+   :alt: Polls change list page
+
+点击"What's up?"记录进行修改：
+
+.. image:: _images/admin05t.png
+   :alt: Editing form for poll object
+
+注意事项：
+
+
+* 表单是根据Poll对象自动生成的。
+
+* 不同的字段类型 (:class:`~django.db.models.DateTimeField`,
+  :class:`~django.db.models.CharField`) 对应HTML中不同类型的input. Django管理系统中每种字段类型都知道如何展现自己。
+
+* 每个:class:`~django.db.models.DateTimeField` 类型的字段都有javascript实现的快捷键. 日期有 "Today" 快捷键和日历弹出窗口， 时间有 "Now" 快捷键以及方便的填出窗口列出常用时间。
+
+页面底部有更多的操作：
+
+* 保存 -- 保存修改并返回该类型对象的修改列表页面。
+
+* 保存并继续编辑-- 保存修改并重新载入该对象的管理页面。
+
+* 保存并继续添加 -- 保存修改并重新打开该类型对象的空白表单。
+
+* 删除 -- 显示删除确认页面。
+
+如果"Date published"的值与在教程1中创建poll时输入的值不相符，很可能是由于没有为 :setting:`TIME_ZONE` 配置正确的值。重新配置后，刷新页面就可以正常展现了。
+
+点击"Today"和"Now"快捷键就可以修改"Date published"属性值，然后点击"保存并继续编辑"保存修改。随后点击右上角的"历史记录"，就能看到这个对象的全部修改记录，还记录着什么时间，哪个用户进行的修改。
+
+.. image:: _images/admin06t.png
+   :alt: History page for poll object
+
+Customize the admin form
+自定义表单
+========================
+
+开始之前先为一行代码也没写就能实现这样的效果惊叹一会儿吧，仅仅是通过 ``admin.site.register(Poll)`` 配置项告知Django，就可以为Poll模型生成相应的表单。但是有时我们想自定义表单的外观以及逻辑，也很简单，在注册对象时配置相应的参数即可。
+
+如果想修改原表单字段的顺序，只要用下面这段代码替换原先的 ``admin.site.register(Poll)`` ::
+
+
+
+    class PollAdmin(admin.ModelAdmin):
+        fields = ['pub_date', 'question']
+
+    admin.site.register(Poll, PollAdmin)
+
+需要修改对象管理选项的时候就可以这么做：创建一个实体管理对象，然后作为第二个参数传给 ``admin.site.register()`` 即可。
+
+上面配置的修改就使得"Publication date"移动到"Question"字段之前。
+
+.. image:: _images/admin07.png
+   :alt: Fields have been reordered
+
+这种方式不限于两个字段间的交换，还可以用于多个字段的排序。一个直观的排序方式是一个重要的提升可用性的方法。
+
+提到表单的多个字段，你可能想要把多个字段归类到不同的字段集中，如下：
+
+    class PollAdmin(admin.ModelAdmin):
+        fieldsets = [
+            (None,               {'fields': ['question']}),
+            ('Date information', {'fields': ['pub_date']}),
+        ]
+
+    admin.site.register(Poll, PollAdmin)
+
+ ``fieldsets`` 中元组的第一个元素是字段集的名称。
+ 我们的表单就变成下面的样子了：
+
+.. image:: _images/admin08t.png
+   :alt: Form has fieldsets now
+
+可以为每个字段集指定class样式，Django内置了``"collapse"`` 样式，用来指定字段集为折叠的。当表单中包含大量不经常使用的字段时，就可以用它把这个字段集折叠起来::
+
+
+        class PollAdmin(admin.ModelAdmin):
+            fieldsets = [
+                (None,               {'fields': ['question']}),
+                ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
+            ]
+
+.. image:: _images/admin09.png
+   :alt: Fieldset is initially collapsed
+
+Adding related objects
+添加关联对象
+======================
+
+OK，现在我们已经有Poll的管理界面了。另外``Poll`` 实体中有多个关联的 ``Choices``，但是管理界面中却没有显示出来。
+
+有两种解决这个问题的方法。一个是像 ``Poll``那样配置 ``Choice``，这个简单，如下： 
+
+    from polls.models import Choice
+
+    admin.site.register(Choice)
+
+这样 "Choices" 的选项就出现在管理界面上了，"Add choice"表单如下图：
+
+.. image:: _images/admin10.png
+   :alt: Choice admin page
+
+在添加choice的表单中，"Poll"字段是一个包含数据库中所有"Poll"的一个下拉框，Django知道在页面展现是需要将:class:`~django.db.models.ForeignKey` 映射为一个下拉框。本示例中只有poll需要被映射为下拉框。
+
+注意在"Poll"后面还有个"Add Another"链接，没有有外键关联的对象都会自动生成这样一个链接。点击"Add Another"链接后，就会弹出添加poll对话框，如果点击保存按钮，Django就会将poll保存到数据库，并且动态添加到下拉框中。
+
+但是这真的是一种效率很低的添加Choice的方法，在添加Poll的同时添加多个Choice体验会好很多。动手实现它！
+
+首先删除Choice模型的 ``register()`` 配置，然后编辑 ``Poll``的配置如下：
+
+    class ChoiceInline(admin.StackedInline):
+        model = Choice
+        extra = 3
+
+    class PollAdmin(admin.ModelAdmin):
+        fieldsets = [
+            (None,               {'fields': ['question']}),
+            ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
+        ]
+        inlines = [ChoiceInline]
+
+    admin.site.register(Poll, PollAdmin)
+
+这样就告知了Django可以在Poll管理界面中编辑Choice，默认情况下为Poll提供三个Choice编辑字段。
+
+想看看修改后的添加poll界面时候起作用，需要重启服务器。
+
+.. image:: _images/admin11t.png
+   :alt: Add poll page now has choices on it
+
+如果看见三个空的关联Choice（通过``extra`` 属性指定的）就说明起作用了。每次编辑不同已经添加的Poll时，都会看到三个不同的关联Choice。
+
+但是这样还是存在一个问题，显示相关Choice对象占用了很多空间。为了解决这个问题，Django提供了一种制表的方式来显示行内的关联对象，只需要像下面那样修改``ChoiceInline`` 即可：
+
+    class ChoiceInline(admin.TabularInline):
+        #...
+
+使用 ``TabularInline`` 替代 ``StackedInline`` 后，这些关联对象显示的就很紧凑了。基于表格的样式如下：
+
+.. image:: _images/admin12.png
+   :alt: Add poll page now has more compact choices
+
+自定义修改列表
+===============================
+
+尽管Poll的管理界面已经很好了，但是我们还是试着对修改列表页面做些调整吧。
+
+现在的管理界面是这样的：
+
+.. image:: _images/admin04t.png
+   :alt: Polls change list page
+
+Django默认显示每个对象的 ``str()`` ，但是有些时候只需要显示特定的几个字段。可是使用``list_display`` 管理选项达到这一目的，它就是需要在修改列表页面展示字段的一个集合::
+
+    class PollAdmin(admin.ModelAdmin):
+        # ...
+        list_display = ('question', 'pub_date')
+
+为了效果明显，我们把教程1中自定义的 ``was_published_recently`` 方法也加进来::
+
+
+
+    class PollAdmin(admin.ModelAdmin):
+        # ...
+        list_display = ('question', 'pub_date', 'was_published_recently')
+
+现在poll的修改列表页面就变成这样了::
+
+.. image:: _images/admin13t.png
+   :alt: Polls change list page, updated
+
+
+可以点击表头进行排序，由于不支持方法输出结果之后再进行排序，所以点击 ``was_published_recently`` 表头是没法进行排序的，而且默认情况下， ``was_published_recently`` 字段表头就是方法名称（把下划线用空格代替），每行都显示方法执行结果的字符串形式。
+
+为了避免这种不友好的情况，可以在``was_published_recently`` 方法中添加几行代码，如下::
+
+    class Poll(models.Model):
+        # ...
+        def was_published_recently(self):
+            return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        was_published_recently.admin_order_field = 'pub_date'
+        was_published_recently.boolean = True
+        was_published_recently.short_description = 'Published recently?'
+
+然后再为Poll修改列表页面增加一个Filter。为 ``PollAdmin``添加的Filter如下::
+
+    list_filter = ['pub_date']
+
+添加的通过``pub_date`` 字段过滤记录的过滤器边栏如下：
+
+.. image:: _images/admin14t.png
+   :alt: Polls change list page, updated
+
+右侧过滤边栏的展现取决于过滤字段的类型，Django知道应该为:class:`~django.db.models.fields.DateTimeField`类型的 ``pub_date`` 字段的过滤器边栏显示"Any date," "Today," "Past 7 days," "This month," "This year."选项
+
+过滤边栏就修饰完毕，再加点儿搜索功能吧::
+
+
+    search_fields = ['question']
+
+这样一个修改列表顶部的搜索框就加好了，当输入搜索关键字后，Django就会通过关键字搜索 ``question`` 字段。也可以通过配置搜索多个字段。尽管后台是使用 ``LIKE`` 实现的，但是只要保证合理性和相对高率即可。
+
+因为Poll有日期字段，为了方便通过日期筛选，这一增加下面这行代码::
+
+    date_hierarchy = 'pub_date'
+
+这样就在修改列表页面顶部增加了一个日期导航栏。显示所有的年份，然后精确到月与日。
+
+值得注意的地方是，Django还自动为我们添加了分页功能，默认每页显示100条记录。现在分页，搜索条，过滤边栏，日期导航以及表头排序和我们预想的那样展现在面前啦。
+
+自定义外观
+=================================
+
+很明显，每个管理页面的页头都显示"Django administration"是不恰当的，他们只是系统名称的占位符，可按需进行替换。
+
+使用Django的模版系统很容易替换，Django管理系统是用Django框架实现的，页面也是使用内置的模板系统。
+
+打开配置文件（``mysite/settings.py``），找到:setting:`TEMPLATE_DIRS` 配置项，它是加载Django模版时文件系统中路径的集合，就是查找的路径。
+
+:setting:`TEMPLATE_DIRS` 默认配置是空的，所以要添加一行，告知Django模板的所在位置::
+
+    TEMPLATE_DIRS = (
+        '/home/my_username/mytemplates', # Change this to your own directory.
+    )
+
+把Django源码中(``django/contrib/admin/templates``)默认的Django管理模板( ``admin/base_site.html`` )拷贝到配置文件中配置的目录。比如配置文件中包含 ``'/home/my_username/mytemplates'``，那么就把 ``django/contrib/admin/templates/admin/base_site.html``文件复制到``/home/my_username/mytemplates/admin/base_site.html``即可。
+
+然后只要编辑这个文件，把Django自动生成的名称换成适合你自己网站的名字。
+
+模板文件中包含很多``{% block branding %}`` 和 ``{{ title }}``这样的文本。``{%`` 和 ``{{``都是Django模板语言的一部分。 Django渲染 ``admin/base_site.html``页面时，会用模板语言来生成最终的html页面。别担心不会使用模板，教程3中会深入介绍Django的模板语言。
+
+任何Django内置的模板都是可以被替换的，替换步骤和上面的步骤一样，把自定义的模板复制到配置文件中指定的目录中即可。
+
+细心的读者可能发现：默认 :setting:`TEMPLATE_DIRS` 是空的啊，Django是怎么找到默认模板的？Django会自动搜索每个app下面子文件夹的 ``templates/`` 目录下的模板作为备用。:ref:`template loader documentation <template-loaders>` 获取更多关于模板的信息。
+
+自定义主界面
+==============================
+
+本小节讲述如何自定义管理系统主界面。
+
+默认 :setting:`INSTALLED_APPS` 中配置的应用是按字母顺序展现的，主界面是管理系统中最重要的一个页面，而且布局也应该易于使用，所以为了这点很可能需要改变页面的布局。
+
+需要像上一节那样修改 ``admin/index.html``，编辑这个文件的时候会发现它使用的是名字叫 ``app_list`` 的模板变量，这个变量中包含了在Django中添加的应用。不用这个也行，也可以在页面中硬编码，哪里放什么合适就在哪里硬编码。再次强调，不懂模板语言也没关系，教程3我们会详细介绍模板语言。
+
+达到满意的效果后，阅读:doc:`教程3</intro/tutorial03>` ，关注创建poll的公共页面。
