@@ -29,7 +29,7 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
   [ 100%] [       2871]  ./topics/i18n/index.txt
   [ 100%] [       8127]  ./topics/settings.txt
   [  30%] [      50383]  ./topics/db/models.txt
-
+  [ 100%] [       3378]  ./intro/tutorial02.txt 
 
 未完成的文档::
 
@@ -85,7 +85,6 @@ http://readthedocs.org/docs/django-document-cn/en/latest/
   [   0%] [       1313]  ./intro/index.txt
   [   0%] [      11967]  ./intro/overview.txt
   [   0%] [      28834]  ./intro/tutorial01.txt
-  [   0%] [      19098]  ./intro/tutorial02.txt
   [   0%] [      21449]  ./intro/tutorial03.txt
   [   0%] [      14605]  ./intro/tutorial04.txt
   [   0%] [       9417]  ./intro/whatsnext.txt
